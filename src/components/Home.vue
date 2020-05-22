@@ -1,17 +1,31 @@
 <template>
-    <div class="home">
-        <h1>{{ msg }}</h1>
-        <p>Welcome to your new single-page application, built with <a href="https://vuejs.org" target="_blank">Vue.js</a> and <a href="http://www.typescriptlang.org/" target="_blank">TypeScript</a>.</p>
-    </div>
+  <div class="home">
+    <BasicOptions v-bind="basicOptions" />
+  </div>
 </template>
 
 <script lang="ts">
-    import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import BasicOptions from "./BasicOptions.vue";
+import { BasicOptionsType, EventDefinition } from "../schema";
 
-    @Component
-    export default class Home extends Vue {
-        @Prop() private msg!: string;
-    }
+@Component({
+  components: { BasicOptions }
+})
+export default class Home extends Vue {
+  @Prop({ default: () => new BasicOptionsType() })
+  private basicOptions!: BasicOptionsType;
+  @Prop({ default: () => [] }) private events!: EventDefinition[];
+
+  get urlState() {
+    return { basicOptions: this.basicOptions, events: this.events };
+  }
+
+  @Watch("urlState")
+  saveState(val: typeof Home.prototype.urlState) {
+    location.replace("#" + JSON.stringify(val));
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

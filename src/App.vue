@@ -13,8 +13,13 @@
             Home
         }
     })
-    export default class App extends Vue { }
+    export default class App extends Vue {
+
+    }
 </script>
 
 <style>
+    #app {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 </style>
