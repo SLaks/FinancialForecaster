@@ -1,4 +1,4 @@
-export class BasicOptionsType {
+export class MortgageInfo {
     loanAmount: number = 0;
     term: number = 0;
     downPayment: number = 0;
@@ -16,4 +16,10 @@ export class EventDefinition {
     periodCount: number = 1;
     /** Day in the `period` that the event happens. */
     periodSubIndex: number = 0;
+}
+
+export interface Transaction {
+    date: Date;
+    name: string;
+    amount: boolean;
 }

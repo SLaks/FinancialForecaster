@@ -3,23 +3,23 @@
     <div class="Form">
       <label>
         <span>Loan Amount</span>
-        <input type="number" v-model="basicOptions.loanAmount" />
+        <input type="number" v-model="mortgageInfo.loanAmount" />
       </label>
       <label>
         <span>Term</span>
-        <input type="number" v-model="basicOptions.term" />
+        <input type="number" v-model="mortgageInfo.term" />
       </label>
       <label>
         <span>Down Payment</span>
-        <input type="number" v-model="basicOptions.downPayment" />
+        <input type="number" v-model="mortgageInfo.downPayment" />
       </label>
       <label>
-        <span>Rate</span>
-        <input type="number" v-model="basicOptions.rate" />
+        <span>Rate (%)</span>
+        <input type="number" v-model="mortgageInfo.rate" />
       </label>
       <label>
         <span>Period</span>
-        <select v-model="basicOptions.period">
+        <select v-model="mortgageInfo.period">
           <option value="monthly">Monthly</option>
           <option value="biweekly">Bi-weekly</option>
         </select>
@@ -30,10 +30,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { BasicOptionsType, EventDefinition } from "../schema";
+import { MortgageInfo, EventDefinition } from "../schema";
 
 interface UrlState {
-  basicOptions: BasicOptionsType;
+  mortgageInfo: MortgageInfo;
   events: EventDefinition[];
 }
 
@@ -41,7 +41,7 @@ interface UrlState {
   components: {}
 })
 export default class Home extends Vue {
-  private basicOptions = new BasicOptionsType();
+  private mortgageInfo = new MortgageInfo();
   private events: EventDefinition[] = [];
 
   mounted() {
@@ -50,12 +50,12 @@ export default class Home extends Vue {
       decodeURIComponent(location.hash.replace(/^#/, ""))
     ) as UrlState;
     if (!urlState) return;
-    if (urlState.basicOptions) this.basicOptions = urlState.basicOptions;
+    if (urlState.mortgageInfo) this.mortgageInfo = urlState.mortgageInfo;
     if (urlState.events) this.events = urlState.events;
   }
 
   get urlState(): UrlState {
-    return { basicOptions: { ...this.basicOptions }, events: this.events };
+    return { mortgageInfo: { ...this.mortgageInfo }, events: this.events };
   }
 
   @Watch("urlState")
