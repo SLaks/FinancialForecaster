@@ -6,7 +6,10 @@ export class MortgageInfo {
     period: 'monthly' | 'biweekly' = 'monthly';
 }
 
+let nextId = 0;
+
 export class EventDefinition {
+    id = ++nextId;
     name: string = '';
     amount: number = 0;
     startDate: Date = new Date;
@@ -21,5 +24,5 @@ export class EventDefinition {
 export interface Transaction {
     date: Date;
     name: string;
-    amount: boolean;
+    amount: number;
 }
