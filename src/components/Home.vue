@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="Form">
-      <v-text-field label="Start Date" type="date" v-model="startDate" />
+      <DatePicker label="Start Date" type="date" v-model="startDate" />
       <v-text-field label="Loan Amount" type="number" v-model.number="mortgageInfo.loanAmount" />
       <v-combobox
         label="Term"
@@ -31,7 +31,8 @@ import { MortgageInfo, EventDefinition } from "../schema";
 import { generateMortgage } from "../logic";
 
 import TransactionsTable from "./TransactionsTable.vue";
-import { format } from "date-fns";
+import DatePicker from "./widgets/DatePicker.vue";
+import { formatISO, startOfDay, parseISO } from "date-fns";
 
 interface UrlState {
   startDate: string | null;
@@ -40,11 +41,11 @@ interface UrlState {
 }
 
 @Component({
-  components: { TransactionsTable }
+  components: { DatePicker, TransactionsTable }
 })
 export default class Home extends Vue {
   private mortgageInfo = new MortgageInfo();
-  private startDate: string = "";
+  private startDate: Date = startOfDay(new Date());
   private events: EventDefinition[] = [];
 
   mounted() {
@@ -53,7 +54,7 @@ export default class Home extends Vue {
       decodeURIComponent(location.hash.replace(/^#/, ""))
     ) as UrlState;
     if (!urlState) return;
-    if (urlState.startDate) this.startDate = urlState.startDate;
+    if (urlState.startDate) this.startDate = parseISO(urlState.startDate);
     if (urlState.mortgageInfo) this.mortgageInfo = urlState.mortgageInfo;
     if (urlState.events) this.events = urlState.events;
   }
@@ -62,19 +63,18 @@ export default class Home extends Vue {
     return {
       mortgageInfo: { ...this.mortgageInfo },
       events: this.events,
-      startDate: this.startDate
-        ? format(new Date(this.startDate), "yyyy-MM-dd")
-        : null
+      startDate: formatISO(this.startDate, {representation: 'date'})
     };
   }
 
   @Watch("urlState")
   saveState(val: UrlState) {
+    if (!val) return;
     location.replace("#" + JSON.stringify(val));
   }
 
   get transactions() {
-    return generateMortgage(new Date(this.startDate), this.mortgageInfo);
+    return generateMortgage(this.startDate, this.mortgageInfo);
   }
 }
 </script>
