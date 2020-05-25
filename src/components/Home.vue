@@ -13,7 +13,7 @@ import { generateMortgage } from "../logic";
 
 import MortgageSettingsUI from "./MortgageSettingsUI.vue";
 import TransactionsTable from "./TransactionsTable.vue";
-import { formatISO, startOfDay, parseISO } from "date-fns";
+import { formatISO, parseISO } from "date-fns";
 
 interface UrlState {
   mortgageInfo: Omit<MortgageInfo, "startDate"> & { startDate: string };
@@ -28,7 +28,11 @@ export default class Home extends Vue {
   private events: EventDefinition[] = [];
 
   mounted() {
+    window.onhashchange = () => this.parseHash();
     if (!location.hash) return;
+    this.parseHash();
+  }
+  parseHash() {
     const urlState = JSON.parse(
       decodeURIComponent(location.hash.replace(/^#/, ""))
     ) as UrlState;
