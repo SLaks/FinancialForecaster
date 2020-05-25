@@ -2,22 +2,27 @@
   <div class="home">
     <div class="Form">
       <DatePicker label="Start Date" type="date" v-model="startDate" />
-      <v-text-field label="Loan Amount" type="number" v-model.number="mortgageInfo.loanAmount" />
+      <currency-field
+        currency="USD"
+        label="Loan Amount"
+        type="number"
+        v-model.number="mortgageInfo.loanAmount"
+      />
       <v-combobox
         label="Term"
         type="number"
         v-model.number="mortgageInfo.term"
         :items="[15,20,30]"
       />
-      <v-text-field label="Down Payment" type="number" v-model.number="mortgageInfo.downPayment" />
-      <v-text-field label="Rate (%)" type="number" v-model.number="mortgageInfo.rate" />
+      <currency-field label="Down Payment" type="number" v-model.number="mortgageInfo.downPayment" />
+      <currency-field label="Rate" type="number" :currency="{suffix: '%'}" :decimal-length="3" v-model.number="mortgageInfo.rate" />
       <v-select
         label="Period"
         v-model="mortgageInfo.period"
         :items="[
-        {text: 'Monthly', value: 'monthly'},
-        {text: 'Bi-weekly', value: 'biweekly'}
-      ]"
+          {text: 'Monthly', value: 'monthly'},
+          {text: 'Bi-weekly', value: 'biweekly'}
+        ]"
       />
     </div>
 
@@ -31,6 +36,7 @@ import { MortgageInfo, EventDefinition } from "../schema";
 import { generateMortgage } from "../logic";
 
 import TransactionsTable from "./TransactionsTable.vue";
+import CurrencyField from "./widgets/CurrencyField.vue";
 import DatePicker from "./widgets/DatePicker.vue";
 import { formatISO, startOfDay, parseISO } from "date-fns";
 
@@ -41,7 +47,7 @@ interface UrlState {
 }
 
 @Component({
-  components: { DatePicker, TransactionsTable }
+  components: { DatePicker, TransactionsTable, CurrencyField }
 })
 export default class Home extends Vue {
   private mortgageInfo = new MortgageInfo();
@@ -63,7 +69,7 @@ export default class Home extends Vue {
     return {
       mortgageInfo: { ...this.mortgageInfo },
       events: this.events,
-      startDate: formatISO(this.startDate, {representation: 'date'})
+      startDate: formatISO(this.startDate, { representation: "date" })
     };
   }
 
