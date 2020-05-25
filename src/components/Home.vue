@@ -2,6 +2,10 @@
   <div class="home">
     <div class="Form">
       <label>
+        <span>Start Date</span>
+        <input type="date" v-model="startDate" />
+      </label>
+      <label>
         <span>Loan Amount</span>
         <input type="number" v-model="mortgageInfo.loanAmount" />
       </label>
@@ -25,23 +29,31 @@
         </select>
       </label>
     </div>
+
+    <transactions-table :transactions="transactions" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { MortgageInfo, EventDefinition } from "../schema";
+import { generateMortgage } from "../logic";
+
+import TransactionsTable from "./TransactionsTable.vue";
+import { format } from "date-fns";
 
 interface UrlState {
+  startDate: string | null;
   mortgageInfo: MortgageInfo;
   events: EventDefinition[];
 }
 
 @Component({
-  components: {}
+  components: { TransactionsTable }
 })
 export default class Home extends Vue {
   private mortgageInfo = new MortgageInfo();
+  private startDate: string = "";
   private events: EventDefinition[] = [];
 
   mounted() {
@@ -50,17 +62,28 @@ export default class Home extends Vue {
       decodeURIComponent(location.hash.replace(/^#/, ""))
     ) as UrlState;
     if (!urlState) return;
+    if (urlState.startDate) this.startDate = urlState.startDate;
     if (urlState.mortgageInfo) this.mortgageInfo = urlState.mortgageInfo;
     if (urlState.events) this.events = urlState.events;
   }
 
   get urlState(): UrlState {
-    return { mortgageInfo: { ...this.mortgageInfo }, events: this.events };
+    return {
+      mortgageInfo: { ...this.mortgageInfo },
+      events: this.events,
+      startDate: this.startDate
+        ? format(new Date(this.startDate), "yyyy-MM-dd")
+        : null
+    };
   }
 
   @Watch("urlState")
   saveState(val: UrlState) {
     location.replace("#" + JSON.stringify(val));
+  }
+
+  get transactions() {
+    return generateMortgage(new Date(this.startDate), this.mortgageInfo);
   }
 }
 </script>
@@ -75,7 +98,7 @@ export default class Home extends Vue {
       width: 160px;
     }
     input {
-      width: 64px;
+      width: 128px;
     }
   }
 }
