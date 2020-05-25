@@ -16,6 +16,7 @@
         :hint="hint"
         persistent-hint
         prepend-icon="mdi-calendar"
+        @click:prepend="menuOpen = !menuOpen;"
         @keydown.esc="menuOpen = false;"
         v-on="on"
       />

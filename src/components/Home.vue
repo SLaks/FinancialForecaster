@@ -15,7 +15,7 @@
         :items="[15,20,30]"
       />
       <currency-field label="Down Payment" type="number" v-model.number="mortgageInfo.downPayment" />
-      <currency-field label="Rate" type="number" :currency="{suffix: '%'}" :decimal-length="3" v-model.number="mortgageInfo.rate" />
+      <currency-field label="Rate" type="number" :currency="{suffix: '%'}" :precision="3" v-model.number="mortgageInfo.rate" />
       <v-select
         label="Period"
         v-model="mortgageInfo.period"
