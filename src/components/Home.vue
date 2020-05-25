@@ -1,33 +1,24 @@
 <template>
   <div class="home">
     <div class="Form">
-      <label>
-        <span>Start Date</span>
-        <input type="date" v-model="startDate" />
-      </label>
-      <label>
-        <span>Loan Amount</span>
-        <input type="number" v-model="mortgageInfo.loanAmount" />
-      </label>
-      <label>
-        <span>Term</span>
-        <input type="number" v-model="mortgageInfo.term" />
-      </label>
-      <label>
-        <span>Down Payment</span>
-        <input type="number" v-model="mortgageInfo.downPayment" />
-      </label>
-      <label>
-        <span>Rate (%)</span>
-        <input type="number" v-model="mortgageInfo.rate" />
-      </label>
-      <label>
-        <span>Period</span>
-        <select v-model="mortgageInfo.period">
-          <option value="monthly">Monthly</option>
-          <option value="biweekly">Bi-weekly</option>
-        </select>
-      </label>
+      <v-text-field label="Start Date" type="date" v-model="startDate" />
+      <v-text-field label="Loan Amount" type="number" v-model.number="mortgageInfo.loanAmount" />
+      <v-combobox
+        label="Term"
+        type="number"
+        v-model.number="mortgageInfo.term"
+        :items="[15,20,30]"
+      />
+      <v-text-field label="Down Payment" type="number" v-model.number="mortgageInfo.downPayment" />
+      <v-text-field label="Rate (%)" type="number" v-model.number="mortgageInfo.rate" />
+      <v-select
+        label="Period"
+        v-model="mortgageInfo.period"
+        :items="[
+        {text: 'Monthly', value: 'monthly'},
+        {text: 'Bi-weekly', value: 'biweekly'}
+      ]"
+      />
     </div>
 
     <transactions-table :transactions="transactions" />
