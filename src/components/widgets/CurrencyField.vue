@@ -1,23 +1,21 @@
 <template>
-  <v-input v-bind="$props"  class="v-text-field">
-    <currency-input v-bind="$props" @input="$emit('input', $event)" />
-  </v-input>
+  <v-text-field
+    :value="formattedValue"
+    @input="forwardEvent($event, 'input')"
+    @change="forwardEvent($event, 'change')"
+    v-bind="$attrs"
+    type="tel"
+    v-currency-directive="$props"
+  />
 </template>
 
 <script>
-import { CurrencyInput } from "vue-currency-input";
+import { CurrencyDirective } from "vue-currency-input";
+import { setValue } from "vue-currency-input/src/api";
 
 export default {
-  components: { CurrencyInput },
+  name: "CurrencyField",
   props: {
-    label: {
-      type: String,
-      default: undefined
-    },
-    hint: {
-      type: String,
-      default: undefined
-    },
     value: {
       type: Number,
       default: 0
@@ -28,7 +26,7 @@ export default {
     },
     currency: {
       type: [String, Object],
-      default: 'USD'
+      default: "USD"
     },
     distractionFree: {
       type: [Boolean, Object],
@@ -53,6 +51,51 @@ export default {
     allowNegative: {
       type: Boolean,
       default: undefined
+    }
+  },
+  directives: { CurrencyDirective },
+  data() {
+    return {
+      formattedValue: null
+    };
+  },
+  created() {
+    if (typeof this.value !== "number") {
+      this.formattedValue = null;
+      return;
+    }
+
+    let minimumFractionDigits = 2;
+    let maximumFractionDigits = 2;
+
+    if (typeof this.precision === "number") {
+      minimumFractionDigits = maximumFractionDigits = this.precision;
+    } else if (typeof this.precision === "object" && !this.autoDecimalMode) {
+      minimumFractionDigits = this.precision.min || 0;
+      maximumFractionDigits =
+        this.precision.max !== undefined ? precision.max : 20;
+    }
+
+    this.formattedValue = this.value.toLocaleString(this.locale, {
+      minimumFractionDigits,
+      maximumFractionDigits
+    });
+  },
+  watch: {
+    value: "setValue"
+  },
+  methods: {
+    setValue(value) {
+      setValue(this.$el.querySelector("input"), value);
+    },
+
+    forwardEvent(value, type) {
+      const input = this.$el.querySelector("input");
+      if (input.$ci) {
+        const numberValue = input.$ci.numberValue;
+        if (this.value !== numberValue) this.$emit(type, numberValue);
+      }
+      this.formattedValue = value;
     }
   }
 };
