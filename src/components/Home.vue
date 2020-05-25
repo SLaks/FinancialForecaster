@@ -1,30 +1,6 @@
 <template>
   <div class="home">
-    <div class="Form">
-      <DatePicker label="Start Date" type="date" v-model="startDate" />
-      <currency-field
-        currency="USD"
-        label="Loan Amount"
-        type="number"
-        v-model.number="mortgageInfo.loanAmount"
-      />
-      <v-combobox
-        label="Term"
-        type="number"
-        v-model.number="mortgageInfo.term"
-        :items="[15,20,30]"
-      />
-      <currency-field label="Down Payment" type="number" v-model.number="mortgageInfo.downPayment" />
-      <currency-field label="Rate" type="number" :currency="{suffix: '%'}" :precision="3" v-model.number="mortgageInfo.rate" />
-      <v-select
-        label="Period"
-        v-model="mortgageInfo.period"
-        :items="[
-          {text: 'Monthly', value: 'monthly'},
-          {text: 'Bi-weekly', value: 'biweekly'}
-        ]"
-      />
-    </div>
+    <MortgageSettingsUI v-model="mortgageInfo" />
 
     <transactions-table :transactions="transactions" />
   </div>
@@ -35,23 +11,20 @@ import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { MortgageInfo, EventDefinition } from "../schema";
 import { generateMortgage } from "../logic";
 
+import MortgageSettingsUI from "./MortgageSettingsUI.vue";
 import TransactionsTable from "./TransactionsTable.vue";
-import CurrencyField from "./widgets/CurrencyField.vue";
-import DatePicker from "./widgets/DatePicker.vue";
 import { formatISO, startOfDay, parseISO } from "date-fns";
 
 interface UrlState {
-  startDate: string | null;
-  mortgageInfo: MortgageInfo;
+  mortgageInfo: Omit<MortgageInfo, "startDate"> & { startDate: string };
   events: EventDefinition[];
 }
 
 @Component({
-  components: { DatePicker, TransactionsTable, CurrencyField }
+  components: { MortgageSettingsUI, TransactionsTable }
 })
 export default class Home extends Vue {
   private mortgageInfo = new MortgageInfo();
-  private startDate: Date = startOfDay(new Date());
   private events: EventDefinition[] = [];
 
   mounted() {
@@ -60,16 +33,25 @@ export default class Home extends Vue {
       decodeURIComponent(location.hash.replace(/^#/, ""))
     ) as UrlState;
     if (!urlState) return;
-    if (urlState.startDate) this.startDate = parseISO(urlState.startDate);
-    if (urlState.mortgageInfo) this.mortgageInfo = urlState.mortgageInfo;
+    if (urlState.mortgageInfo)
+      this.mortgageInfo = {
+        ...urlState.mortgageInfo,
+        startDate: urlState.mortgageInfo.startDate
+          ? parseISO(urlState.mortgageInfo.startDate)
+          : new Date()
+      };
     if (urlState.events) this.events = urlState.events;
   }
 
   get urlState(): UrlState {
     return {
-      mortgageInfo: { ...this.mortgageInfo },
-      events: this.events,
-      startDate: formatISO(this.startDate, { representation: "date" })
+      mortgageInfo: {
+        ...this.mortgageInfo,
+        startDate: formatISO(this.mortgageInfo.startDate, {
+          representation: "date"
+        })
+      },
+      events: this.events
     };
   }
 
@@ -80,7 +62,7 @@ export default class Home extends Vue {
   }
 
   get transactions() {
-    return generateMortgage(this.startDate, this.mortgageInfo);
+    return generateMortgage(this.mortgageInfo);
   }
 }
 </script>

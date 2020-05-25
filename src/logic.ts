@@ -1,6 +1,6 @@
 import { MortgageInfo, Transaction } from './schema';
 import { addMonths, startOfMonth, differenceInCalendarDays, addWeeks } from 'date-fns'
-export function generateMortgage(startDate: Date, loan: MortgageInfo): Transaction[] {
+export function generateMortgage(loan: MortgageInfo): Transaction[] {
     if (!loan.loanAmount) return [];
     let monthlyRate = loan.rate / 12 / 100;
     const basePaymentCount = loan.term * 12;
@@ -12,13 +12,13 @@ export function generateMortgage(startDate: Date, loan: MortgageInfo): Transacti
     const result: Transaction[] = [];
 
     // Beginning of period ending with first payment.
-    let paymentDate = addMonths(startOfMonth(startDate), 1);
+    let paymentDate = addMonths(startOfMonth(loan.startDate), 1);
 
     result.push({
-        date: startDate,
+        date: loan.startDate,
         name: 'Mortgage: Closing Fee Interest',
         amount: - loan.loanAmount * monthlyRate / 30
-            * differenceInCalendarDays(paymentDate, startDate),
+            * differenceInCalendarDays(paymentDate, loan.startDate),
     });
 
     let remainingPrinciple = loan.loanAmount;

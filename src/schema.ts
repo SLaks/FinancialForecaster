@@ -1,4 +1,5 @@
 export class MortgageInfo {
+    startDate: Date = new Date();
     loanAmount: number = 0;
     term: number = 0;
     downPayment: number = 0;
