@@ -1,7 +1,26 @@
 <template>
-  <div id="app">
-    <Home />
-  </div>
+  <v-app>
+    <v-app-bar app color="primary" dark>
+      <div class="d-flex align-center">
+        <v-img
+          alt="Logo"
+          class="shrink mr-2"
+          contain
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          transition="scale-transition"
+          width="40"
+        />
+
+        <div class="shrink mt-1 hidden-sm-and-down">MortgageCalc</div>
+      </div>
+
+      <v-spacer></v-spacer>
+    </v-app-bar>
+
+    <v-content>
+      <Home />
+    </v-content>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -17,8 +36,3 @@ import Home from "./components/Home.vue";
 export default class App extends Vue {}
 </script>
 
-<style>
-#app {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
-</style>
