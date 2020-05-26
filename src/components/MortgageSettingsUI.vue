@@ -12,6 +12,7 @@
       label="Rate"
       :currency="{suffix: '%'}"
       :precision="3"
+      :min=".1"
       v-model.number="mortgageInfo.rate"
     />
     <v-select

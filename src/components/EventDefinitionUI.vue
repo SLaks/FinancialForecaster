@@ -4,7 +4,7 @@
       <v-text-field dense v-model="def.name" placeholder="Name" />
     </td>
     <td style="width: 128px;">
-      <CurrencyField dense v-model="def.amount" />
+      <CurrencyField dense v-model="def.amount" :allowNegative="true" />
     </td>
     <td style="width: 144px;">
       <DatePicker dense v-model="def.startDate" />
@@ -16,7 +16,7 @@
         </template>
         <v-list>
           <v-list-item>
-            <v-text-field label="Every" v-model.number="def.periodCount" type="number" />
+            <v-text-field label="Every" :min="1" v-model.number="def.periodCount" type="number" />
           </v-list-item>
           <v-list-item>
             <v-select
