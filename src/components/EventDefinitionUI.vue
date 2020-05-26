@@ -3,15 +3,15 @@
     <td>
       <v-text-field dense v-model="def.name" placeholder="Name" />
     </td>
-    <td>
-      <CurrencyField dense v-model="def.amount" style="width:96px;" />
+    <td style="width: 128px;">
+      <CurrencyField dense v-model="def.amount" />
     </td>
-    <td>
+    <td style="width: 144px;">
       <DatePicker dense v-model="def.startDate" />
     </td>
     <td>Recur?</td>
     <td>
-      <v-btn icon small @click="$emit('delete')"  title="Delete event">
+      <v-btn icon small @click="$emit('delete')" title="Delete event">
         <v-icon small>mdi-delete</v-icon>
       </v-btn>
     </td>

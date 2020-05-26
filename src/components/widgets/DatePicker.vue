@@ -6,7 +6,7 @@
     transition="scale-transition"
     offset-y
     offset-overflow
-    max-width="290px"
+    max-width="96px"
     min-width="290px"
   >
     <template v-slot:activator="{ on }">
