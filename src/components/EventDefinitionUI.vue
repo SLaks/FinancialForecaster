@@ -27,16 +27,6 @@
                 ]"
             />
           </v-list-item>
-          <v-list-item>
-            <v-text-field
-              v-if="def.period == 'months'"
-              label="On the"
-              v-model.number="def.periodSubIndex"
-              type="number"
-              :suffix="ordinalIndicator(def.periodSubIndex)"
-            />
-            <v-select v-else label="On" v-model="def.periodSubIndex" :items="weekdayOptions" />
-          </v-list-item>
         </v-list>
       </v-menu>
     </td>
@@ -67,6 +57,7 @@ const weekdays = [
   "Saturday"
 ];
 
+const dayOfWeekFormat = new Intl.DateTimeFormat(undefined, { weekday: "long" });
 @Component({
   components: { DatePicker, CurrencyField }
 })
@@ -87,10 +78,11 @@ export default class EventDefinitionUI extends Vue {
         let str;
         if (this.def.periodCount === 1) str = "Every month";
         else str = `Every ${this.def.periodCount} months`;
-        return `${str} on the ${ordinal(this.def.periodSubIndex + 1)}`;
+        return `${str} on the ${ordinal(this.def.startDate.getDate())}`;
 
       case "weeks":
-        const day = weekdays[this.def.periodSubIndex];
+        var day = dayOfWeekFormat.format(this.def.startDate);
+
         if (this.def.periodCount === 1) return `Every ${day}`;
         else return `Every ${this.def.periodCount} ${day}s`;
     }

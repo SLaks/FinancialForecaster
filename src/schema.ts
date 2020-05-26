@@ -18,8 +18,6 @@ export class EventDefinition {
     period: 'months' | 'weeks' = 'months';
     /** Number of `period`s between events. */
     periodCount: number = 1;
-    /** Day in the `period` that the event happens. */
-    periodSubIndex: number = 0;
 }
 
 export interface Transaction {
