@@ -51,17 +51,7 @@ import DatePicker from "./widgets/DatePicker.vue";
 import { EventDefinition } from "@/schema";
 import equal from "fast-deep-equal";
 import ordinal from "ordinal";
-import ordinalIndicator from "ordinal/indicator";
 import { format } from "date-fns";
-
-const weekdays = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Saturday"
-];
 
 const dayOfWeekFormat = new Intl.DateTimeFormat(undefined, { weekday: "long" });
 @Component({
@@ -71,12 +61,9 @@ export default class EventDefinitionUI extends Vue {
   @Prop() value!: EventDefinition;
 
   def = { ...this.value };
-  readonly ordinalIndicator = ordinalIndicator;
   pluralize(str: string) {
     return str + (this.def.periodCount === 1 ? "" : "s");
   }
-
-  readonly weekdayOptions = weekdays.map((text, value) => ({ text, value }));
 
   get recurs() {
     return this.def.period !== "once";
@@ -112,8 +99,6 @@ export default class EventDefinitionUI extends Vue {
     if (this.def.periodCount === 1) return this.def.period.replace(/s$/, "");
     return this.def.period;
   }
-
-  hover = false;
 
   @Watch("value")
   updateData(value: EventDefinition) {
