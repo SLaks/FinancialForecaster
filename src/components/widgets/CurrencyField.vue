@@ -6,6 +6,8 @@
     v-bind="$attrs"
     type="tel"
     v-currency-directive="$props"
+    @keydown.up="setValue(value + 1)"
+    @keydown.down="setValue(value - 1)"
   />
 </template>
 

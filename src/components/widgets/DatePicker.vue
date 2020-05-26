@@ -12,14 +12,17 @@
     <template v-slot:activator="{ on }">
       <v-text-field
         v-model="formattedDate"
-        :label="label"
-        :hint="hint"
+        v-bind="$attrs"
         persistent-hint
-        prepend-icon="mdi-calendar"
-        @click:prepend="menuOpen = !menuOpen;"
         @keydown.esc="menuOpen = false;"
         v-on="on"
-      />
+      >
+        <template v-slot:append>
+          <v-btn @click="menuOpen = !menuOpen;" icon x-small>
+            <v-icon>mdi-menu-down</v-icon>
+          </v-btn>
+        </template>
+      </v-text-field>
     </template>
     <v-date-picker :value="value && value.toISOString()" @input="setDate($event)" no-title />
   </v-menu>
@@ -34,8 +37,6 @@ const formatStr = "MM/dd/yyyy";
 export default class DatePicker extends Vue {
   menuOpen = false;
 
-  @Prop() label!: string;
-  @Prop() hint!: string;
   @Prop() value!: Date;
 
   get formattedDate() {
