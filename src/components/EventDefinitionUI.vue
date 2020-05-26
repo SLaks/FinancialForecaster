@@ -1,18 +1,24 @@
 <template>
   <tr class="EventDefinitionRow">
     <td>
-      <v-text-field dense v-model="def.name" placeholder="Name" />
+      <v-text-field dense hide-details :color="color" v-model="def.name" placeholder="Name">
+        <template v-slot:prepend>
+          <v-icon
+            :class="colorClass"
+          >mdi-arrow-{{def.amount > 0 ? 'up' : 'down'}}-drop-circle-outline</v-icon>
+        </template>
+      </v-text-field>
     </td>
     <td style="width: 128px;">
-      <CurrencyField dense v-model="def.amount" :allowNegative="true" />
+      <CurrencyField dense hide-details :color="color" v-model="def.amount" :allowNegative="true" />
     </td>
     <td style="width: 144px;">
-      <DatePicker dense v-model="def.startDate" />
+      <DatePicker dense hide-details :color="color" v-model="def.startDate" />
     </td>
     <td>
       <v-menu offset-y transition="slide-x-transition" :close-on-content-click="false">
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" text>{{periodDescription}} {{untilDescription}}</v-btn>
+          <v-btn :class="colorClass" small v-on="on" text>{{periodDescription}} {{untilDescription}}</v-btn>
         </template>
         <v-list>
           <v-list-item>
@@ -63,6 +69,15 @@ export default class EventDefinitionUI extends Vue {
   def = { ...this.value };
   pluralize(str: string) {
     return str + (this.def.periodCount === 1 ? "" : "s");
+  }
+
+  get color() {
+    if (this.def.amount > 0) return "green";
+    if (this.def.amount < 0) return "red";
+    return null;
+  }
+  get colorClass() {
+    return this.color ? this.color + "--text" : null;
   }
 
   get recurs() {
