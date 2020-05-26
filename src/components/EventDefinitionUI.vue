@@ -27,6 +27,9 @@
                 ]"
             />
           </v-list-item>
+          <v-list-item>
+            <DatePicker label="Until" clearable v-model="def.endDate" />
+          </v-list-item>
         </v-list>
       </v-menu>
     </td>

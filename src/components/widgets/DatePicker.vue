@@ -24,13 +24,13 @@
         </template>
       </v-text-field>
     </template>
-    <v-date-picker :value="value && value.toISOString()" @input="setDate($event)" no-title />
+    <v-date-picker :value="isoDate" @input="setDate($event)" no-title />
   </v-menu>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { format, parseISO, parse } from "date-fns";
+import { format, formatISO, parseISO, parse } from "date-fns";
 
 const formatStr = "MM/dd/yyyy";
 @Component({})
@@ -40,15 +40,22 @@ export default class DatePicker extends Vue {
   @Prop() value!: Date;
 
   get formattedDate() {
+    if (!this.value) return null;
     return format(coerceDate(this.value), formatStr);
   }
-  set formattedDate(value: string) {
-    this.$emit("input", new Date(value));
+  set formattedDate(value: string | null) {
+    this.$emit("input", value ? new Date(value) : null);
+  }
+
+  get isoDate() {
+    return this.value
+      ? formatISO(this.value, { representation: "date" })
+      : null;
   }
 
   setDate(value: Date | string) {
     this.menuOpen = false;
-    this.$emit("input", coerceDate(value));
+    this.$emit("input", value ? coerceDate(value) : null);
   }
 }
 
