@@ -15,7 +15,7 @@ export class EventDefinition {
     amount: number = 0;
     startDate: Date = new Date;
     endDate: Date | null = null;
-    period: 'months' | 'weeks' = 'months';
+    period: 'once' | 'months' | 'weeks' = 'months';
     /** Number of `period`s between events. */
     periodCount: number = 1;
 }

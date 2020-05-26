@@ -16,9 +16,12 @@
         </template>
         <v-list>
           <v-list-item>
+            <v-switch :label="recurs ? 'Recur' : 'Once'" v-model="recurs" />
+          </v-list-item>
+          <v-list-item v-if="recurs">
             <v-text-field label="Every" :min="1" v-model.number="def.periodCount" type="number" />
           </v-list-item>
-          <v-list-item>
+          <v-list-item v-if="recurs">
             <v-select
               v-model="def.period"
               :items="[
@@ -27,7 +30,7 @@
                 ]"
             />
           </v-list-item>
-          <v-list-item>
+          <v-list-item v-if="recurs">
             <DatePicker label="Until" clearable v-model="def.endDate" />
           </v-list-item>
         </v-list>
@@ -75,6 +78,13 @@ export default class EventDefinitionUI extends Vue {
 
   readonly weekdayOptions = weekdays.map((text, value) => ({ text, value }));
 
+  get recurs() {
+    return this.def.period !== "once";
+  }
+  set recurs(value: boolean) {
+    this.def.period = value ? "months" : "once";
+  }
+
   get periodDescription() {
     switch (this.def.period) {
       case "months":
@@ -88,6 +98,8 @@ export default class EventDefinitionUI extends Vue {
 
         if (this.def.periodCount === 1) return `Every ${day}`;
         else return `Every ${this.def.periodCount} ${day}s`;
+      case "once":
+        return "Once";
     }
   }
 
