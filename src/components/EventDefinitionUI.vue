@@ -9,7 +9,37 @@
     <td style="width: 144px;">
       <DatePicker dense v-model="def.startDate" />
     </td>
-    <td>{{periodDescription}} {{untilDescription}}</td>
+    <td>
+      <v-menu offset-y transition="slide-x-transition" :close-on-content-click="false">
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" text>{{periodDescription}} {{untilDescription}}</v-btn>
+        </template>
+        <v-list>
+          <v-list-item>
+            <v-text-field label="Every" v-model.number="def.periodCount" type="number" />
+          </v-list-item>
+          <v-list-item>
+            <v-select
+              v-model="def.period"
+              :items="[
+                {text: pluralize('Month'), value: 'months'},
+                {text: pluralize('Week'), value: 'weeks'}
+                ]"
+            />
+          </v-list-item>
+          <v-list-item>
+            <v-text-field
+              v-if="def.period == 'months'"
+              label="On the"
+              v-model.number="def.periodSubIndex"
+              type="number"
+              :suffix="ordinalIndicator(def.periodSubIndex)"
+            />
+            <v-select v-else label="On" v-model="def.periodSubIndex" :items="weekdayOptions" />
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </td>
     <td>
       <v-btn icon small @click="$emit('delete')" title="Delete event">
         <v-icon small>mdi-delete</v-icon>
@@ -25,7 +55,17 @@ import DatePicker from "./widgets/DatePicker.vue";
 import { EventDefinition } from "@/schema";
 import equal from "fast-deep-equal";
 import ordinal from "ordinal";
+import ordinalIndicator from "ordinal/indicator";
 import { format } from "date-fns";
+
+const weekdays = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Saturday"
+];
 
 @Component({
   components: { DatePicker, CurrencyField }
@@ -34,14 +74,12 @@ export default class EventDefinitionUI extends Vue {
   @Prop() value!: EventDefinition;
 
   def = { ...this.value };
-  readonly weekdays = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Saturday"
-  ];
+  readonly ordinalIndicator = ordinalIndicator;
+  pluralize(str: string) {
+    return str + (this.def.periodCount === 1 ? "" : "s");
+  }
+
+  readonly weekdayOptions = weekdays.map((text, value) => ({ text, value }));
 
   get periodDescription() {
     switch (this.def.period) {
@@ -52,7 +90,7 @@ export default class EventDefinitionUI extends Vue {
         return `${str} on the ${ordinal(this.def.periodSubIndex + 1)}`;
 
       case "weeks":
-        const day = this.weekdays[this.def.periodSubIndex];
+        const day = weekdays[this.def.periodSubIndex];
         if (this.def.periodCount === 1) return `Every ${day}`;
         else return `Every ${this.def.periodCount} ${day}s`;
     }
