@@ -1,18 +1,22 @@
 <template>
-  <table>
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Name</th>
-        <th>Amount</th>
-      </tr>
-    </thead>
-    <tr v-for="(transaction, index) in transactions" :key="index">
-      <td>{{transaction.date | formatDate}}</td>
-      <td>{{transaction.name}}</td>
-      <td>{{transaction.amount | currency }}</td>
-    </tr>
-  </table>
+  <v-simple-table :dense="true" :fixed-header="true" :height="600">
+    <template v-slot:default>
+      <thead>
+        <tr>
+          <th class="text-left">Date</th>
+          <th class="text-left">Name</th>
+          <th class="text-right">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(transaction, index) in transactions" :key="index">
+          <td>{{transaction.date | formatDate}}</td>
+          <td>{{transaction.name}}</td>
+          <td class="text-right">{{transaction.amount | currency }}</td>
+        </tr>
+      </tbody>
+    </template>
+  </v-simple-table>
 </template>
 
 <script lang="ts">
