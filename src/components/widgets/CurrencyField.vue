@@ -6,8 +6,8 @@
     v-bind="$attrs"
     type="tel"
     v-currency-directive="$props"
-    @keydown.up="setValue(value + 1)"
-    @keydown.down="setValue(value - 1)"
+    @keydown.up="setValue(value + keyFactor($event))"
+    @keydown.down="setValue(value - keyFactor($event))"
   />
 </template>
 
@@ -98,6 +98,15 @@ export default {
         if (this.value !== numberValue) this.$emit(type, numberValue);
       }
       this.formattedValue = value;
+    },
+
+    /** @param {KeyboardEvent} e */
+    keyFactor(e) {
+      const factor = e.altKey ? 0.1 : 10;
+      let value = e.altKey ? 0.1 : 1;
+      if (e.shiftKey) value *= factor;
+      if (e.ctrlKey) value *= factor * factor;
+      return value;
     }
   }
 };
