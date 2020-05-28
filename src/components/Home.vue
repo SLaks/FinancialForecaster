@@ -122,7 +122,13 @@ export default class Home extends Vue {
       "settingsTab"
     ];
     for (const key of urlKeys) {
-      if (urlState[key]) Object.assign((this as any)[key], urlState[key]);
+      if (urlState[key]) {
+        if (typeof this[key] === "object") {
+          Object.assign(this[key], urlState[key]);
+        } else {
+          (this as any)[key] = urlState[key];
+        }
+      }
     }
   }
 
