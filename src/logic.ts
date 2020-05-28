@@ -16,6 +16,11 @@ export function generateMortgage(loan: MortgageInfo): Transaction[] {
 
     result.push({
         date: loan.startDate,
+        name: 'Mortgage: Down payment',
+        amount: - (loan.housePrice - loan.loanAmount),
+    });
+    result.push({
+        date: loan.startDate,
         name: 'Mortgage: Closing Fee Interest',
         amount: - loan.loanAmount * monthlyRate / 30
             * differenceInCalendarDays(paymentDate, loan.startDate),
