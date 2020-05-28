@@ -2,11 +2,19 @@
   <div class="home">
     <v-card>
       <v-tabs v-model="settingsTab" background-color="primary" dark>
+        <v-tab>Bank Accounts</v-tab>
         <v-tab>Mortgage</v-tab>
         <v-tab>Payments / Income</v-tab>
       </v-tabs>
 
       <v-tabs-items v-model="settingsTab">
+        <v-tab-item>
+          <v-card flat>
+            <v-card-text>
+              <BankSettingsUI v-model="bankInfo" />
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
         <v-tab-item>
           <v-card flat>
             <v-card-text>
@@ -51,26 +59,35 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { addYears } from "date-fns";
 import { deserializeWithDates } from "../utils";
 import { generateMortgage, generateEventTransactions } from "../logic";
-import { MortgageInfo, EventDefinition } from "../schema";
-import sortBy from 'lodash/sortBy';
+import { MortgageInfo, EventDefinition, BankInfo } from "../schema";
+import sortBy from "lodash/sortBy";
 
+import BankSettingsUI from "./BankSettingsUI.vue";
 import EventDefinitionUI from "./EventDefinitionUI.vue";
 import MortgageSettingsUI from "./MortgageSettingsUI.vue";
 import TransactionsTable from "./TransactionsTable.vue";
 
 interface UrlState {
   mortgageInfo: MortgageInfo;
+  bankInfo: BankInfo;
   events: EventDefinition[];
   settingsTab: string | null;
 }
 
 @Component({
-  components: { EventDefinitionUI, MortgageSettingsUI, TransactionsTable }
+  components: {
+    EventDefinitionUI,
+    MortgageSettingsUI,
+    TransactionsTable,
+    BankSettingsUI
+  }
 })
 export default class Home extends Vue {
   private mortgageInfo = new MortgageInfo();
+  private bankInfo = new BankInfo();
   private events: EventDefinition[] = [];
   private settingsTab = null;
 
@@ -91,17 +108,19 @@ export default class Home extends Vue {
     ) as UrlState;
     if (!urlState) return;
     const urlKeys: Array<keyof UrlState> = [
+      "bankInfo",
       "mortgageInfo",
       "events",
       "settingsTab"
     ];
     for (const key of urlKeys) {
-      if (urlState[key]) (this as any)[key] = urlState[key];
+      if (urlState[key]) Object.assign((this as any)[key], urlState[key]);
     }
   }
 
   get urlState(): UrlState {
     return {
+      bankInfo: this.bankInfo,
       mortgageInfo: this.mortgageInfo,
       events: this.events,
       settingsTab: this.settingsTab
@@ -114,30 +133,16 @@ export default class Home extends Vue {
     location.replace("#" + JSON.stringify(val));
   }
 
+  get endDate() {
+    return addYears(this.bankInfo.asOfDate, 30);
+  }
+
   get transactions() {
-    const all= [
+    const all = [
       ...generateMortgage(this.mortgageInfo),
-      ...this.events.flatMap(e =>
-        generateEventTransactions(e, this.mortgageInfo.startDate)
-      )
+      ...this.events.flatMap(e => generateEventTransactions(e, this.endDate))
     ];
-    return sortBy(all, 'date');
+    return sortBy(all, "date");
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-.Form {
-  label {
-    display: flex;
-    margin-bottom: 8px;
-    span {
-      width: 160px;
-    }
-    input {
-      width: 128px;
-    }
-  }
-}
-</style>

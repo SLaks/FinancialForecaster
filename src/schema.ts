@@ -1,3 +1,20 @@
+export class BankInfo {
+    asOfDate: Date = new Date();
+
+    /** Balance, as of `asOf`, of account used for expenses. */
+    checkingBalance = 1000;
+    /** APR for checking account, in percentage points (0-100). */
+    checkingGrowthRate = .1;
+
+    /** Desired balance of checking account.  Excess funds are transferred to savings monthly. */
+    checkingTarget = 1000;
+
+    /** Balance, as of `asOf`, of account that only grows. */
+    savingsBalance = 10000;
+    /** APR for savings account, in percentage points (0-100). */
+    savingsGrowthRate = 6;
+}
+
 export class MortgageInfo {
     startDate: Date = new Date();
     loanAmount: number = 0;
