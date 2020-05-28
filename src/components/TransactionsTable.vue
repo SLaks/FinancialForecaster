@@ -10,7 +10,7 @@
       </thead>
       <tbody>
         <tr v-for="(transaction, index) in transactions" :key="index">
-          <td>{{transaction.date | formatDate}}</td>
+          <td :title="transaction.date | formatDateLong">{{transaction.date | formatDate}}</td>
           <td>{{transaction.name}}</td>
           <td class="text-right">{{transaction.amount | currency }}</td>
         </tr>
@@ -28,7 +28,8 @@ import Vue2Filters from "vue2-filters";
 
 @Component({
   filters: {
-    formatDate: (date: Date) => format(date, "yyyy-MM-dd")
+    formatDate: (date: Date) => format(date, "yyyy-MM-dd"),
+    formatDateLong: (date: Date) => format(date, "iiii, MMMM d, yyyy"),
   },
   mixins: [Vue2Filters.mixin]
 })

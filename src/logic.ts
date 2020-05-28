@@ -1,5 +1,5 @@
-import { MortgageInfo, Transaction } from './schema';
-import { addMonths, startOfMonth, differenceInCalendarDays, addWeeks } from 'date-fns'
+import { MortgageInfo, Transaction, EventDefinition } from './schema';
+import { addMonths, startOfMonth, differenceInCalendarDays, addWeeks, add } from 'date-fns'
 export function generateMortgage(loan: MortgageInfo): Transaction[] {
     if (!loan.loanAmount) return [];
     let monthlyRate = loan.rate / 12 / 100;
@@ -68,4 +68,24 @@ export function generateMortgage(loan: MortgageInfo): Transaction[] {
 
         if (result.length > 10000) throw new Error('Too big!!!');
     }
+}
+
+export function generateEventTransactions(def: EventDefinition, endDate: Date): Transaction[] {
+    if (!def.name || !def.amount) return [];
+
+    const transactions: Transaction[] = [];
+    for (let curDate = def.startDate; curDate < (def.endDate ?? endDate);) {
+        transactions.push({
+            name: def.name,
+            amount: def.amount,
+            date: curDate,
+        });
+
+        if (transactions.length > 10000) throw new Error('Too big!!!');
+
+        if (def.period === 'once') break;
+        curDate = add(curDate, { [def.period]: def.periodCount });
+    }
+
+    return transactions;
 }

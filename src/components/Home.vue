@@ -52,8 +52,9 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { deserializeWithDates } from "../utils";
-import { generateMortgage } from "../logic";
+import { generateMortgage, generateEventTransactions } from "../logic";
 import { MortgageInfo, EventDefinition } from "../schema";
+import sortBy from 'lodash/sortBy';
 
 import EventDefinitionUI from "./EventDefinitionUI.vue";
 import MortgageSettingsUI from "./MortgageSettingsUI.vue";
@@ -62,7 +63,7 @@ import TransactionsTable from "./TransactionsTable.vue";
 interface UrlState {
   mortgageInfo: MortgageInfo;
   events: EventDefinition[];
-  settingsTab: string|null;
+  settingsTab: string | null;
 }
 
 @Component({
@@ -103,7 +104,7 @@ export default class Home extends Vue {
     return {
       mortgageInfo: this.mortgageInfo,
       events: this.events,
-      settingsTab: this.settingsTab, 
+      settingsTab: this.settingsTab
     };
   }
 
@@ -114,7 +115,13 @@ export default class Home extends Vue {
   }
 
   get transactions() {
-    return generateMortgage(this.mortgageInfo);
+    const all= [
+      ...generateMortgage(this.mortgageInfo),
+      ...this.events.flatMap(e =>
+        generateEventTransactions(e, this.mortgageInfo.startDate)
+      )
+    ];
+    return sortBy(all, 'date');
   }
 }
 </script>
