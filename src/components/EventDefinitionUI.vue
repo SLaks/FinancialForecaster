@@ -18,7 +18,9 @@
     <td>
       <v-menu offset-y transition="slide-x-transition" :close-on-content-click="false">
         <template v-slot:activator="{ on }">
-          <v-btn :class="colorClass" small v-on="on" text>{{periodDescription}} {{untilDescription}}</v-btn>
+          <v-btn :class="[colorClass, 'RecurButton']" small v-on="on" text>
+            <span class="RecurLabel">{{periodDescription}} {{untilDescription}}</span>
+          </v-btn>
         </template>
         <v-list>
           <v-list-item>
@@ -132,5 +134,18 @@ export default class EventDefinitionUI extends Vue {
   > .v-input__control
   > .v-input__slot::before {
   display: none;
+}
+
+.RecurButton {
+  overflow: hidden;
+  white-space: normal !important;
+  height: auto !important;
+  display: block !important;
+  margin: 4px;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  .RecurLabel {
+    display: block;
+  }
 }
 </style>

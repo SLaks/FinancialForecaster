@@ -18,7 +18,7 @@
         v-on="on"
       >
         <template v-slot:append>
-          <v-btn @click="menuOpen = !menuOpen;" icon x-small>
+          <v-btn @click="menuOpen = !menuOpen;" icon x-small tabindex="-1">
             <v-icon>mdi-menu-down</v-icon>
           </v-btn>
         </template>

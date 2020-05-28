@@ -1,60 +1,68 @@
 <template>
-  <div class="home">
-    <v-card>
-      <v-tabs v-model="settingsTab" background-color="primary" dark>
-        <v-tab>Bank Accounts</v-tab>
-        <v-tab>Mortgage</v-tab>
-        <v-tab>Payments / Income</v-tab>
-      </v-tabs>
+  <v-container>
+    <v-row>
+      <v-col :cols="12" lg="6">
+        <v-card>
+          <v-tabs v-model="settingsTab" background-color="primary" dark>
+            <v-tab>Bank Accounts</v-tab>
+            <v-tab>Mortgage</v-tab>
+            <v-tab>Payments / Income</v-tab>
+          </v-tabs>
 
-      <v-tabs-items v-model="settingsTab">
-        <v-tab-item>
-          <v-card flat>
-            <v-card-text>
-              <BankSettingsUI v-model="bankInfo" />
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-        <v-tab-item>
-          <v-card flat>
-            <v-card-text>
-              <MortgageSettingsUI v-model="mortgageInfo" />
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-        <v-tab-item>
-          <v-card flat>
-            <v-card-text>
-              <v-simple-table dense fixed-header :height="600">
-                <thead>
-                  <tr>
-                    <th class="text-left">Name</th>
-                    <th class="text-left">Amount</th>
-                    <th class="text-left">Start Date</th>
-                    <th class="text-left">Recurrence</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="(def, index) in events"
-                    :key="def.id"
-                    is="EventDefinitionUI"
-                    @delete="events.splice(index, 1)"
-                    :value="def"
-                    @input="Object.assign(def, $event)"
-                  />
-                </tbody>
-              </v-simple-table>
-              <v-btn block text @click="addEvent">Add event</v-btn>
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-      </v-tabs-items>
-    </v-card>
+          <v-tabs-items v-model="settingsTab">
+            <v-tab-item>
+              <v-card flat>
+                <v-card-text>
+                  <BankSettingsUI v-model="bankInfo" />
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card flat>
+                <v-card-text>
+                  <MortgageSettingsUI v-model="mortgageInfo" />
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card flat>
+                <v-card-text>
+                  <v-simple-table dense fixed-header :height="400">
+                    <thead>
+                      <tr>
+                        <th class="text-left">Name</th>
+                        <th class="text-left">Amount</th>
+                        <th class="text-left">Start Date</th>
+                        <th class="text-left">Recurrence</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="(def, index) in events"
+                        :key="def.id"
+                        is="EventDefinitionUI"
+                        @delete="events.splice(index, 1)"
+                        :value="def"
+                        @input="Object.assign(def, $event)"
+                      />
+                    </tbody>
+                  </v-simple-table>
+                  <v-btn block text @click="addEvent">Add event</v-btn>
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+          </v-tabs-items>
+        </v-card>
+      </v-col>
 
-    <transactions-table :transactions="transactions" />
-  </div>
+      <v-col :cols="12" lg="6">
+        <v-card>
+          <transactions-table :transactions="transactions" />
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
