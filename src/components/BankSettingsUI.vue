@@ -21,7 +21,7 @@
         <currency-field
           label="Target balance"
           hint="Any excess value will be deposited to savings monthly."
-          v-model.number="bankInfo.checkingBalance"
+          v-model.number="bankInfo.checkingTarget"
         />
       </v-card-text>
     </v-card>

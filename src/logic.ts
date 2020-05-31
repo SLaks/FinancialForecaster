@@ -1,5 +1,6 @@
 import { MortgageInfo, Transaction, EventDefinition, BankRecord, BankInfo } from './schema';
 import { addMonths, startOfMonth, differenceInCalendarDays, addWeeks, add, addDays, startOfDay, endOfDay, subBusinessDays } from 'date-fns'
+import { findLast } from 'lodash';
 export function generateMortgage(loan: MortgageInfo): Transaction[] {
     if (!loan.loanAmount) return [];
     let monthlyRate = loan.rate / 12 / 100;
@@ -91,7 +92,6 @@ export function generateEventTransactions(def: EventDefinition, endDate: Date): 
 }
 
 export function generateBankRecords(bankInfo: BankInfo, endDate: Date, transactions: Transaction[]): BankRecord[] {
-
     const nextRecord: BankRecord = {
         date: startOfDay(bankInfo.asOfDate),
         checkingBalance: bankInfo.checkingBalance,
@@ -99,6 +99,8 @@ export function generateBankRecords(bankInfo: BankInfo, endDate: Date, transacti
     };
     let transactionIndex = transactions.findIndex(t => t.date >= nextRecord.date);
     if (transactionIndex < 0) return [];
+
+    const lastBigExpenseDate = findLast(transactions, t => t.amount >= bankInfo.checkingTarget / 2)?.date;
 
     const checkingRate = 1 + bankInfo.checkingGrowthRate / 100 / 12
     const savingsRate = 1 + bankInfo.savingsGrowthRate / 100 / 12
@@ -117,6 +119,11 @@ export function generateBankRecords(bankInfo: BankInfo, endDate: Date, transacti
         if (nextRecord.date === subBusinessDays(addMonths(startOfMonth(nextRecord.date), 1), 1)) {
             nextRecord.checkingBalance *= checkingRate;
             nextRecord.savingsBalance *= savingsRate;
+
+            if (!lastBigExpenseDate || nextRecord.date > lastBigExpenseDate) {
+                nextRecord.savingsBalance += nextRecord.checkingBalance - bankInfo.checkingTarget;
+                nextRecord.checkingBalance = bankInfo.checkingTarget;
+            }
         }
 
         records.push({ ...nextRecord });
