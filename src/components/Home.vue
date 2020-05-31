@@ -59,6 +59,8 @@
       <v-col :cols="12" lg="6">
         <v-card>
           <transactions-table :transactions="transactions" />
+
+          <GChart type="LineChart" :data="chartData" :options="chartOptions" />
         </v-card>
       </v-col>
     </v-row>
@@ -69,7 +71,11 @@
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { addYears } from "date-fns";
 import { deserializeWithDates } from "../utils";
-import { generateMortgage, generateEventTransactions } from "../logic";
+import {
+  generateMortgage,
+  generateEventTransactions,
+  generateBankRecords
+} from "../logic";
 import { MortgageInfo, EventDefinition, BankInfo } from "../schema";
 import sortBy from "lodash/sortBy";
 
@@ -157,6 +163,29 @@ export default class Home extends Vue {
       ...this.events.flatMap(e => generateEventTransactions(e, this.endDate))
     ];
     return sortBy(all, "date");
+  }
+
+  get bankRecords() {
+    return generateBankRecords(this.bankInfo, this.endDate, this.transactions);
+  }
+
+  chartOptions = { focusTarget: "category" };
+
+  get chartData() {
+    const formatter = new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: "USD"
+    });
+    return [
+      ["Date", "Checking", "Savings"],
+      ...this.bankRecords
+        .filter(b => b.date.getDate() === 0 || b.date.getDate() === 15)
+        .map(b => [
+          b.date,
+          { v: b.checkingBalance, f: formatter.format(b.checkingBalance) },
+          { v: b.savingsBalance, f: formatter.format(b.savingsBalance) }
+        ])
+    ];
   }
 }
 </script>

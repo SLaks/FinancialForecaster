@@ -1,5 +1,5 @@
-import { MortgageInfo, Transaction, EventDefinition } from './schema';
-import { addMonths, startOfMonth, differenceInCalendarDays, addWeeks, add } from 'date-fns'
+import { MortgageInfo, Transaction, EventDefinition, BankRecord, BankInfo } from './schema';
+import { addMonths, startOfMonth, differenceInCalendarDays, addWeeks, add, addDays, startOfDay, endOfDay, subBusinessDays } from 'date-fns'
 export function generateMortgage(loan: MortgageInfo): Transaction[] {
     if (!loan.loanAmount) return [];
     let monthlyRate = loan.rate / 12 / 100;
@@ -88,4 +88,38 @@ export function generateEventTransactions(def: EventDefinition, endDate: Date): 
     }
 
     return transactions;
+}
+
+export function generateBankRecords(bankInfo: BankInfo, endDate: Date, transactions: Transaction[]): BankRecord[] {
+
+    const nextRecord: BankRecord = {
+        date: startOfDay(bankInfo.asOfDate),
+        checkingBalance: bankInfo.checkingBalance,
+        savingsBalance: bankInfo.savingsBalance
+    };
+    let transactionIndex = transactions.findIndex(t => t.date >= nextRecord.date);
+    if (transactionIndex < 0) return [];
+
+    const checkingRate = 1 + bankInfo.checkingGrowthRate / 100 / 12
+    const savingsRate = 1 + bankInfo.savingsGrowthRate / 100 / 12
+
+    const records: BankRecord[] = [];
+    for (; nextRecord.date <= endDate; nextRecord.date = addDays(nextRecord.date, 1)) {
+        for (; transactions[transactionIndex].date <= endOfDay(nextRecord.date); transactionIndex++) {
+            let delta = transactions[transactionIndex].amount;
+            nextRecord.checkingBalance += delta;
+            if (nextRecord.checkingBalance < 0) {
+                nextRecord.savingsBalance += nextRecord.checkingBalance;
+                nextRecord.checkingBalance = 0;
+            }
+        }
+
+        if (nextRecord.date === subBusinessDays(addMonths(startOfMonth(nextRecord.date), 1), 1)) {
+            nextRecord.checkingBalance *= checkingRate;
+            nextRecord.savingsBalance *= savingsRate;
+        }
+
+        records.push({ ...nextRecord });
+    }
+    return records;
 }

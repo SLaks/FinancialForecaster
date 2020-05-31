@@ -42,3 +42,9 @@ export interface Transaction {
     name: string;
     amount: number;
 }
+
+export interface BankRecord {
+    date: Date;
+    checkingBalance: number;
+    savingsBalance: number;
+}
