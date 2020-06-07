@@ -25,7 +25,7 @@
         <v-tab-item>
           <v-card flat>
             <v-card-text>
-              <v-simple-table dense fixed-header :height="400">
+              <v-simple-table dense>
                 <thead>
                   <tr>
                     <th class="text-left">Name</th>
@@ -171,6 +171,7 @@ export default class Home extends Vue {
     focusTarget: "category",
     vAxis: { format: "currency" },
     series: [{ targetAxisIndex: 0 }, { targetAxisIndex: 1 }],
+    height: 400,
     vAxes: [{ title: "Checking" }, { title: "Savings" }]
   };
 

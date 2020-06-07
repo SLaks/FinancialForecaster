@@ -14,8 +14,12 @@
     <template v-slot:item.startOfMonth="{ item }">{{item.startOfMonth | formatMonth}}</template>
     <template v-slot:item.checkingBalance="{ item }">{{item.checkingBalance | currency }}</template>
     <template v-slot:item.savingsBalance="{ item }">{{item.savingsBalance | currency }}</template>
-    <template v-slot:item.income="{ item }">{{item.income | currency }}</template>
-    <template v-slot:item.expenses="{ item }">{{item.expenses | currency }}</template>
+    <template v-slot:item.income="{ item }">
+      <span class="green--text">{{item.income | currency }}</span>
+    </template>
+    <template v-slot:item.expenses="{ item }">
+      <span class="red--text">{{item.expenses | currency }}</span>
+    </template>
 
     <template v-slot:expanded-item="{ headers, item }">
       <td :colspan="headers.length" class="ExpandedCell">
@@ -67,6 +71,6 @@ export default class RecordsTable extends Vue {
 
 <style lang="scss">
 .RecordsTable tbody tr.v-data-table__expanded__content {
-  box-shadow: none;
+  box-shadow: none !important;
 }
 </style>

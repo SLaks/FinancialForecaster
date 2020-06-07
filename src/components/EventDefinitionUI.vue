@@ -144,6 +144,7 @@ export default class EventDefinitionUI extends Vue {
   margin: 4px;
   padding-top: 4px !important;
   padding-bottom: 4px !important;
+  text-align: left;
   .RecurLabel {
     display: block;
   }
