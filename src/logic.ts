@@ -100,14 +100,14 @@ export function generateBankRecords(bankInfo: BankInfo, endDate: Date, transacti
     let transactionIndex = transactions.findIndex(t => t.date >= nextRecord.date);
     if (transactionIndex < 0) return [];
 
-    const lastBigExpenseDate = findLast(transactions, t => t.amount >= bankInfo.checkingTarget / 2)?.date;
+    const lastBigExpenseDate = findLast(transactions, t => t.amount <= -bankInfo.checkingTarget / 2)?.date;
 
     const checkingRate = 1 + bankInfo.checkingGrowthRate / 100 / 12
     const savingsRate = 1 + bankInfo.savingsGrowthRate / 100 / 12
 
     const records: BankRecord[] = [];
     for (; nextRecord.date <= endDate; nextRecord.date = addDays(nextRecord.date, 1)) {
-        for (; transactions[transactionIndex].date <= endOfDay(nextRecord.date); transactionIndex++) {
+        for (; transactionIndex < transactions.length && transactions[transactionIndex].date <= endOfDay(nextRecord.date); transactionIndex++) {
             let delta = transactions[transactionIndex].amount;
             nextRecord.checkingBalance += delta;
             if (nextRecord.checkingBalance < 0) {
@@ -116,7 +116,9 @@ export function generateBankRecords(bankInfo: BankInfo, endDate: Date, transacti
             }
         }
 
-        if (nextRecord.date === subBusinessDays(addMonths(startOfMonth(nextRecord.date), 1), 1)) {
+        if (transactionIndex >= transactions.length) break;
+
+        if (+nextRecord.date === +subBusinessDays(addMonths(startOfMonth(nextRecord.date), 1), 1)) {
             nextRecord.checkingBalance *= checkingRate;
             nextRecord.savingsBalance *= savingsRate;
 
