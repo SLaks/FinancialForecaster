@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@mdi/font": "^3.9.97",
+    "@types/google.visualization": "0.0.53",
     "@types/lodash": "^4.14.153",
     "date-fns": "^2.14.0",
     "fast-deep-equal": "^3.1.1",

@@ -54,33 +54,18 @@
     </div>
 
     <div class="Results">
-      <v-tabs v-model="resultsTab" background-color="primary" dark>
-        <v-tab>Transactions</v-tab>
-        <v-tab>Balances</v-tab>
-      </v-tabs>
-      <v-tabs-items v-model="resultsTab">
-        <v-tab-item>
-          <v-card flat>
-            <v-card-text>
-              <transactions-table :transactions="transactions" />
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-        <v-tab-item>
-          <v-card flat>
-            <v-card-text>
-              <records-table :records="bankRecords" />
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-      </v-tabs-items>
-
+      <v-card flat>
+        <v-card-text>
+          <records-table :records="bankRecords" />
+        </v-card-text>
+      </v-card>
       <GChart type="LineChart" :data="chartData" :options="chartOptions" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import { google } from "../shims-google";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { addYears } from "date-fns";
 import { deserializeWithDates } from "../utils";
@@ -96,7 +81,6 @@ import BankSettingsUI from "./BankSettingsUI.vue";
 import EventDefinitionUI from "./EventDefinitionUI.vue";
 import MortgageSettingsUI from "./MortgageSettingsUI.vue";
 import RecordsTable from "./RecordsTable.vue";
-import TransactionsTable from "./TransactionsTable.vue";
 
 interface UrlState {
   mortgageInfo: MortgageInfo;
@@ -110,7 +94,6 @@ interface UrlState {
     EventDefinitionUI,
     MortgageSettingsUI,
     RecordsTable,
-    TransactionsTable,
     BankSettingsUI
   }
 })
@@ -119,7 +102,6 @@ export default class Home extends Vue {
   private bankInfo = new BankInfo();
   private events: EventDefinition[] = [];
   private settingsTab = null;
-  private resultsTab = null;
 
   addEvent() {
     const newEvent = new EventDefinition();
@@ -185,22 +167,27 @@ export default class Home extends Vue {
     return generateBankRecords(this.bankInfo, this.endDate, this.transactions);
   }
 
-  chartOptions = { focusTarget: "category" };
+  chartOptions: google.visualization.LineChartOptions = {
+    focusTarget: "category",
+    vAxis: { format: "currency" },
+    series: [{ targetAxisIndex: 0 }, { targetAxisIndex: 1 }],
+    vAxes: [{ title: "Checking" }, { title: "Savings" }]
+  };
 
   get chartData() {
-    const formatter = new Intl.NumberFormat(undefined, {
+    const currency = new Intl.NumberFormat(undefined, {
       style: "currency",
       currency: "USD"
     });
     return [
-      ["Date", "Checking", "Savings"],
-      ...this.bankRecords
-        .filter(b => b.date.getDate() === 0 || b.date.getDate() === 15)
-        .map(b => [
-          b.date,
-          { v: b.checkingBalance, f: formatter.format(b.checkingBalance) },
-          { v: b.savingsBalance, f: formatter.format(b.savingsBalance) }
-        ])
+      ["Date", "Checking", "Savings", "Incomes", "Expenses"],
+      ...this.bankRecords.map(b => [
+        b.startOfMonth,
+        { v: b.checkingBalance, f: currency.format(b.checkingBalance) },
+        { v: b.savingsBalance, f: currency.format(b.savingsBalance) },
+        { v: b.income, f: currency.format(b.income) },
+        { v: b.expenses, f: currency.format(b.expenses) }
+      ])
     ];
   }
 }
@@ -216,7 +203,7 @@ export default class Home extends Vue {
 
   .DefinitionTabs {
     min-width: 600px;
-    flex-grow: .2;
+    flex-grow: 0.2;
   }
 
   .Results {

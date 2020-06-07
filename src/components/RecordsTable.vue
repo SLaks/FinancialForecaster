@@ -1,22 +1,30 @@
 <template>
-  <v-simple-table :dense="true" :fixed-header="true" :height="600">
-    <template v-slot:default>
-      <thead>
-        <tr>
-          <th class="text-left">Date</th>
-          <th class="text-right">Checking</th>
-          <th class="text-right">Savings</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(record, index) in filteredRecords" :key="index">
-          <td :title="record.date | formatDateLong">{{record.date | formatDate}}</td>
-          <td class="text-right">{{record.checkingBalance | currency }}</td>
-          <td class="text-right">{{record.savingsBalance | currency }}</td>
-        </tr>
-      </tbody>
+  <v-data-table
+    dense
+    :items-per-page="12"
+    :headers="headers"
+    :items="records"
+    item-key="key"
+    show-expand
+    :expanded.sync="expandedRows"
+    single-expand
+    disable-sort
+    class="RecordsTable"
+  >
+    <template v-slot:item.startOfMonth="{ item }">{{item.startOfMonth | formatMonth}}</template>
+    <template v-slot:item.checkingBalance="{ item }">{{item.checkingBalance | currency }}</template>
+    <template v-slot:item.savingsBalance="{ item }">{{item.savingsBalance | currency }}</template>
+    <template v-slot:item.income="{ item }">{{item.income | currency }}</template>
+    <template v-slot:item.expenses="{ item }">{{item.expenses | currency }}</template>
+
+    <template v-slot:expanded-item="{ headers, item }">
+      <td :colspan="headers.length" class="ExpandedCell">
+        <v-card>
+          <transactions-table :transactions="item.transactions" />
+        </v-card>
+      </td>
     </template>
-  </v-simple-table>
+  </v-data-table>
 </template>
 
 <script lang="ts">
@@ -25,11 +33,12 @@ import { Component, Prop } from "vue-property-decorator";
 import { BankRecord } from "../schema";
 import { format } from "date-fns";
 import Vue2Filters from "vue2-filters";
+import TransactionsTable from "./TransactionsTable.vue";
 
 @Component({
+  components: { TransactionsTable },
   filters: {
-    formatDate: (date: Date) => format(date, "yyyy-MM-dd"),
-    formatDateLong: (date: Date) => format(date, "iiii, MMMM d, yyyy")
+    formatMonth: (date: Date) => format(date, "yyyy: MMMM")
   },
   mixins: [Vue2Filters.mixin]
 })
@@ -37,19 +46,27 @@ export default class RecordsTable extends Vue {
   @Prop()
   private records!: BankRecord[];
 
-  get filteredRecords() {
-    return this.records.filter((r, i) => {
-      if (!i) return true;
-      const last = this.records[i - 1];
-      return (
-        r.checkingBalance !== last.checkingBalance ||
-        r.savingsBalance !== last.savingsBalance
-      );
-    });
-  }
+  expandedRows = [];
+
+  headers = [
+    { text: "", value: "data-table-expand" },
+    { text: "Date", value: "startOfMonth" },
+    { text: "Checking", value: "checkingBalance", align: "end" },
+    { text: "Savings", value: "savingsBalance", align: "end" },
+    { text: "Income", value: "income", align: "end" },
+    { text: "Expenses", value: "expenses", align: "end" }
+  ];
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
+.ExpandedCell {
+  padding-bottom: 8px;
+}
+</style>
 
+<style lang="scss">
+.RecordsTable tbody tr.v-data-table__expanded__content {
+  box-shadow: none;
+}
 </style>

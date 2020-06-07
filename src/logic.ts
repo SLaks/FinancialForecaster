@@ -1,5 +1,5 @@
 import { MortgageInfo, Transaction, EventDefinition, BankRecord, BankInfo } from './schema';
-import { addMonths, startOfMonth, differenceInCalendarDays, addWeeks, add, addDays, startOfDay, endOfDay, subBusinessDays } from 'date-fns'
+import { addMonths, startOfMonth, differenceInCalendarDays, addWeeks, add, addDays, startOfDay, endOfDay, subBusinessDays, endOfMonth } from 'date-fns'
 import { findLast } from 'lodash';
 export function generateMortgage(loan: MortgageInfo): Transaction[] {
     if (!loan.loanAmount) return [];
@@ -91,44 +91,52 @@ export function generateEventTransactions(def: EventDefinition, endDate: Date): 
     return transactions;
 }
 
-export function generateBankRecords(bankInfo: BankInfo, endDate: Date, transactions: Transaction[]): BankRecord[] {
-    const nextRecord: BankRecord = {
-        date: startOfDay(bankInfo.asOfDate),
+export function generateBankRecords(bankInfo: BankInfo, endDate: Date, allTransactions: Transaction[]): BankRecord[] {
+    const nextRecord = {
+        startOfMonth: startOfMonth(bankInfo.asOfDate),
         checkingBalance: bankInfo.checkingBalance,
-        savingsBalance: bankInfo.savingsBalance
+        savingsBalance: bankInfo.savingsBalance,
     };
-    let transactionIndex = transactions.findIndex(t => t.date >= nextRecord.date);
+    let transactionIndex = allTransactions.findIndex(t => t.date >= bankInfo.asOfDate);
     if (transactionIndex < 0) return [];
 
-    const lastBigExpenseDate = findLast(transactions, t => t.amount <= -bankInfo.checkingTarget / 2)?.date;
+    const lastBigExpenseMonth = findLast(allTransactions, t => t.amount <= -bankInfo.checkingTarget / 2)?.date;
 
     const checkingRate = 1 + bankInfo.checkingGrowthRate / 100 / 12
     const savingsRate = 1 + bankInfo.savingsGrowthRate / 100 / 12
 
     const records: BankRecord[] = [];
-    for (; nextRecord.date <= endDate; nextRecord.date = addDays(nextRecord.date, 1)) {
-        for (; transactionIndex < transactions.length && transactions[transactionIndex].date <= endOfDay(nextRecord.date); transactionIndex++) {
-            let delta = transactions[transactionIndex].amount;
+    for (; nextRecord.startOfMonth <= endDate; nextRecord.startOfMonth = addMonths(nextRecord.startOfMonth, 1)) {
+        let expenses = 0;
+        let income = 0;
+        const theseTransactions = [];
+        for (; transactionIndex < allTransactions.length
+            && allTransactions[transactionIndex].date <= endOfMonth(nextRecord.startOfMonth);
+            transactionIndex++) {
+            let delta = allTransactions[transactionIndex].amount;
+            if (delta > 0) income += delta;
+            else expenses -= delta;
             nextRecord.checkingBalance += delta;
+            theseTransactions.push(allTransactions[transactionIndex]);
             if (nextRecord.checkingBalance < 0) {
                 nextRecord.savingsBalance += nextRecord.checkingBalance;
                 nextRecord.checkingBalance = 0;
             }
         }
 
-        if (transactionIndex >= transactions.length) break;
+        nextRecord.checkingBalance *= checkingRate;
+        nextRecord.savingsBalance *= savingsRate;
 
-        if (+nextRecord.date === +subBusinessDays(addMonths(startOfMonth(nextRecord.date), 1), 1)) {
-            nextRecord.checkingBalance *= checkingRate;
-            nextRecord.savingsBalance *= savingsRate;
-
-            if (!lastBigExpenseDate || nextRecord.date > lastBigExpenseDate) {
-                nextRecord.savingsBalance += nextRecord.checkingBalance - bankInfo.checkingTarget;
-                nextRecord.checkingBalance = bankInfo.checkingTarget;
-            }
+        if (!lastBigExpenseMonth || nextRecord.startOfMonth > lastBigExpenseMonth) {
+            nextRecord.savingsBalance += nextRecord.checkingBalance - bankInfo.checkingTarget;
+            nextRecord.checkingBalance = bankInfo.checkingTarget;
         }
 
-        records.push({ ...nextRecord });
+        records.push({
+            ...nextRecord, key: nextRecord.startOfMonth.toISOString(),
+            expenses, income, transactions: theseTransactions,
+        });
+        if (transactionIndex >= allTransactions.length) break;
     }
     return records;
 }

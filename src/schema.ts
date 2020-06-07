@@ -43,8 +43,14 @@ export interface Transaction {
     amount: number;
 }
 
+/** Records of transactions & bank info for a single month. */
 export interface BankRecord {
-    date: Date;
+    key: string;
+    startOfMonth: Date;
     checkingBalance: number;
     savingsBalance: number;
+
+    transactions: Transaction[];
+    income: number;
+    expenses: number;
 }
