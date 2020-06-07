@@ -1,6 +1,6 @@
 <template>
   <div class="Root">
-    <v-card class="DefinitionTabs">
+    <div class="DefinitionTabs">
       <v-tabs v-model="settingsTab" background-color="primary" dark>
         <v-tab>Bank Accounts</v-tab>
         <v-tab>Mortgage</v-tab>
@@ -51,13 +51,32 @@
           </v-card>
         </v-tab-item>
       </v-tabs-items>
-    </v-card>
+    </div>
 
-    <v-card class="Results">
-      <transactions-table :transactions="transactions" />
+    <div class="Results">
+      <v-tabs v-model="resultsTab" background-color="primary" dark>
+        <v-tab>Transactions</v-tab>
+        <v-tab>Balances</v-tab>
+      </v-tabs>
+      <v-tabs-items v-model="resultsTab">
+        <v-tab-item>
+          <v-card flat>
+            <v-card-text>
+              <transactions-table :transactions="transactions" />
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item>
+          <v-card flat>
+            <v-card-text>
+              <records-table :records="bankRecords" />
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
 
       <GChart type="LineChart" :data="chartData" :options="chartOptions" />
-    </v-card>
+    </div>
   </div>
 </template>
 
@@ -76,6 +95,7 @@ import sortBy from "lodash/sortBy";
 import BankSettingsUI from "./BankSettingsUI.vue";
 import EventDefinitionUI from "./EventDefinitionUI.vue";
 import MortgageSettingsUI from "./MortgageSettingsUI.vue";
+import RecordsTable from "./RecordsTable.vue";
 import TransactionsTable from "./TransactionsTable.vue";
 
 interface UrlState {
@@ -89,6 +109,7 @@ interface UrlState {
   components: {
     EventDefinitionUI,
     MortgageSettingsUI,
+    RecordsTable,
     TransactionsTable,
     BankSettingsUI
   }
@@ -98,6 +119,7 @@ export default class Home extends Vue {
   private bankInfo = new BankInfo();
   private events: EventDefinition[] = [];
   private settingsTab = null;
+  private resultsTab = null;
 
   addEvent() {
     const newEvent = new EventDefinition();
@@ -194,12 +216,11 @@ export default class Home extends Vue {
 
   .DefinitionTabs {
     min-width: 600px;
-    max-width: 100%;
-    flex-grow: 1;
+    flex-grow: .2;
   }
 
   .Results {
-    flex-grow: 2;
+    flex-grow: 20000;
     min-width: 400px;
   }
 }
