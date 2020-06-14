@@ -24,13 +24,18 @@
 </template>
 
 <style lang="scss">
-html,
-body,
-.v-application,
-.v-content, .Root {
-  max-height: 100%;
-  overflow: hidden;
-  height: 100%;
+@import "./variables";
+
+@media (min-width: $largeWidth + 1) {
+  html,
+  body,
+  .v-application,
+  .v-content,
+  .Root {
+    max-height: 100%;
+    overflow: hidden;
+    height: 100%;
+  }
 }
 </style>
 

@@ -1,6 +1,6 @@
 <template>
   <div class="Root pa-4">
-    <v-card class="DefinitionTabs mr-4" elevation="4">
+    <v-card class="DefinitionTabs Column Left" elevation="4">
       <v-tabs v-model="settingsTab" background-color="primary" dark>
         <v-tab>Bank Accounts</v-tab>
         <v-tab>Mortgage</v-tab>
@@ -53,7 +53,7 @@
       </v-tabs-items>
     </v-card>
 
-    <div class="Results">
+    <div class="Column Right">
       <v-card elevation="4" class="mb-4 Table">
         <v-card-text class="ScrollableCard">
           <records-table :records="bankRecords" />
@@ -197,13 +197,9 @@ export default class Home extends Vue {
 </script>
 
 <style lang="scss" scoped>
-$largeWidth: 1000px;
+@import "../variables";
 
 .Root {
-  display: flex;
-  overflow: hidden;
-  min-height: 0;
-
   // Force content to scroll vertically.
   .ScrollableCard {
     height: 100%;
@@ -211,18 +207,28 @@ $largeWidth: 1000px;
   }
 
   @media (max-width: $largeWidth) {
-    .DefinitionTabs {
-      width: 100%;
+    .Column {
+      &.v-card,
+      .v-card {
+        margin-bottom: 16px;
+      }
     }
-    flex-wrap: wrap;
   }
 
   @media (min-width: $largeWidth + 1) {
+    display: flex;
+    overflow: hidden;
+    min-height: 0;
+
+    .Column.Left {
+      margin-right: 16px;
+    }
+
     .DefinitionTabs {
       min-width: 600px;
       flex-grow: 0.2;
     }
-    .Results {
+    .Column.Right {
       flex-grow: 20000;
       min-width: 500px;
       display: flex;
