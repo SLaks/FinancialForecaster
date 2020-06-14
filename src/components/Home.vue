@@ -1,64 +1,67 @@
 <template>
   <div class="Root pa-4">
-    <v-card class="DefinitionTabs Column Left" elevation="4">
-      <v-tabs v-model="settingsTab" background-color="primary" dark>
-        <v-tab>Bank Accounts</v-tab>
-        <v-tab>Mortgage</v-tab>
-        <v-tab>Payments / Income</v-tab>
-      </v-tabs>
+    <div class="Column Left">
+      <v-card class="DefinitionTabs" elevation="4">
+        <v-tabs v-model="settingsTab" background-color="primary" dark>
+          <v-tab>Bank Accounts</v-tab>
+          <v-tab>Mortgage</v-tab>
+          <v-tab>Payments / Income</v-tab>
+        </v-tabs>
 
-      <v-tabs-items v-model="settingsTab">
-        <v-tab-item>
-          <v-card flat>
-            <v-card-text>
-              <BankSettingsUI v-model="bankInfo" />
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-        <v-tab-item>
-          <v-card flat>
-            <v-card-text>
-              <MortgageSettingsUI v-model="mortgageInfo" />
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-        <v-tab-item>
-          <v-card flat>
-            <v-card-text>
-              <v-simple-table dense>
-                <thead>
-                  <tr>
-                    <th class="text-left">Name</th>
-                    <th class="text-left">Amount</th>
-                    <th class="text-left">Start Date</th>
-                    <th class="text-left">Recurrence</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="(def, index) in events"
-                    :key="def.id"
-                    is="EventDefinitionUI"
-                    @delete="events.splice(index, 1)"
-                    :value="def"
-                    @input="Object.assign(def, $event)"
-                  />
-                </tbody>
-              </v-simple-table>
-              <v-btn block text @click="addEvent">Add event</v-btn>
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-      </v-tabs-items>
-    </v-card>
+        <v-tabs-items v-model="settingsTab">
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>
+                <BankSettingsUI v-model="bankInfo" />
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>
+                <MortgageSettingsUI v-model="mortgageInfo" />
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card flat>
+              <v-card-text>
+                <v-simple-table dense>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Name</th>
+                      <th class="text-left">Amount</th>
+                      <th class="text-left">Start Date</th>
+                      <th class="text-left">Recurrence</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(def, index) in events"
+                      :key="def.id"
+                      is="EventDefinitionUI"
+                      @delete="events.splice(index, 1)"
+                      :value="def"
+                      @input="Object.assign(def, $event)"
+                    />
+                  </tbody>
+                </v-simple-table>
+                <v-btn block text @click="addEvent">Add event</v-btn>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+        </v-tabs-items>
+      </v-card>
+    </div>
 
     <div class="Column Right">
-      <v-card elevation="4" class="mb-4 Table">
+      <v-card elevation="4" class="Table">
         <v-card-text class="ScrollableCard">
           <records-table :records="bankRecords" />
         </v-card-text>
       </v-card>
+
       <v-card elevation="4" class="overflow-hidden Chart">
         <GChart type="LineChart" :data="chartData" :options="chartOptions" />
       </v-card>
@@ -207,11 +210,8 @@ export default class Home extends Vue {
   }
 
   @media (max-width: $largeWidth) {
-    .Column {
-      &.v-card,
-      .v-card {
-        margin-bottom: 16px;
-      }
+    .Column > .v-card {
+      margin-bottom: 16px;
     }
   }
 
@@ -219,6 +219,10 @@ export default class Home extends Vue {
     display: flex;
     overflow: hidden;
     min-height: 0;
+
+    .Column > .v-card + .v-card {
+      margin-top: 16px;
+    }
 
     .Column.Left {
       margin-right: 16px;
