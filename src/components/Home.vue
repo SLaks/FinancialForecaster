@@ -56,8 +56,8 @@
     </div>
 
     <div class="Column Right">
-      <v-card elevation="4" class="Table">
-        <v-card-text class="ScrollableCard">
+      <v-card elevation="4" class="ScrollableCard">
+        <v-card-text>
           <records-table :records="bankRecords" />
         </v-card-text>
       </v-card>
@@ -176,7 +176,7 @@ export default class Home extends Vue {
     focusTarget: "category",
     vAxis: { format: "currency" },
     series: [{ targetAxisIndex: 0 }, { targetAxisIndex: 1 }],
-    height: 400,
+    height: 300,
     vAxes: [{ title: "Checking" }, { title: "Savings" }]
   };
 
@@ -203,12 +203,6 @@ export default class Home extends Vue {
 @import "../variables";
 
 .Root {
-  // Force content to scroll vertically.
-  .ScrollableCard {
-    height: 100%;
-    overflow: hidden;
-  }
-
   @media (max-width: $largeWidth) {
     .Column > .v-card {
       margin-bottom: 16px;
@@ -220,29 +214,36 @@ export default class Home extends Vue {
     overflow: hidden;
     min-height: 0;
 
-    .Column > .v-card + .v-card {
-      margin-top: 16px;
-    }
-
-    .Column.Left {
-      margin-right: 16px;
-    }
-
-    .DefinitionTabs {
-      min-width: 600px;
-      flex-grow: 0.2;
-    }
-    .Column.Right {
-      flex-grow: 20000;
-      min-width: 500px;
+    .Column {
       display: flex;
       flex-direction: column;
+      > .v-card + .v-card {
+        margin-top: 16px;
+      }
+      &.Left {
+        margin-right: 16px;
+        min-width: 600px;
+        flex-grow: 0.2;
+      }
+      &.Right {
+        flex-grow: 20000;
+        min-width: 500px;
+      }
     }
+
     .Chart {
       flex-shrink: 0;
     }
-    .Table {
-      overflow: auto;
+
+    // Force content to scroll vertically.
+    .ScrollableCard {
+      display: flex;
+      overflow: hidden;
+      flex-direction: column;
+      > .v-card__text {
+        display: flex;
+        overflow: hidden;
+      }
     }
   }
 }

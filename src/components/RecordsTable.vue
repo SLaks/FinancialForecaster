@@ -72,6 +72,7 @@ export default class RecordsTable extends Vue {
   display: flex;
   flex-direction: column;
   max-height: 100%;
+  flex-grow: 1;
 }
 
 .RecordsTable tbody tr:not(.v-data-table__expanded__content) > td:first-child {

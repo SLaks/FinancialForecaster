@@ -29,6 +29,7 @@
 @media (min-width: $largeWidth + 1) {
   html,
   body,
+  .v-main,
   .v-application,
   .v-content,
   .Root {
