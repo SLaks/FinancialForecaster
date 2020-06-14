@@ -15,11 +15,13 @@
       </div>
 
       <v-spacer></v-spacer>
+      <v-switch v-model="isDark" label="Dark theme" hide-details />
     </v-app-bar>
 
-    <v-content>
-      <Home />
-    </v-content>
+
+    <v-main>
+      <Home :is-dark.sync="isDark" />
+    </v-main>
   </v-app>
 </template>
 
@@ -46,6 +48,8 @@ import { Component, Vue } from "vue-property-decorator";
 import Home from "./components/Home.vue";
 
 @Component({ components: { Home } })
-export default class App extends Vue {}
+export default class App extends Vue {
+  isDark = false;
+}
 </script>
 

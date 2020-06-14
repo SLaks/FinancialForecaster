@@ -86,12 +86,14 @@ import BankSettingsUI from "./BankSettingsUI.vue";
 import EventDefinitionUI from "./EventDefinitionUI.vue";
 import MortgageSettingsUI from "./MortgageSettingsUI.vue";
 import RecordsTable from "./RecordsTable.vue";
+import { colors } from "vuetify/lib";
 
 interface UrlState {
   mortgageInfo: MortgageInfo;
   bankInfo: BankInfo;
   events: EventDefinition[];
   settingsTab: string | null;
+  isDark: boolean;
 }
 
 @Component({
@@ -107,6 +109,14 @@ export default class Home extends Vue {
   private bankInfo = new BankInfo();
   private events: EventDefinition[] = [];
   private settingsTab = null;
+
+  @Prop() isDark!: boolean;
+
+  @Watch("isDark")
+  updateParent(value: boolean) {
+    if (value !== this.isDark) this.$emit("update:isDark", value);
+    this.$vuetify.theme.dark = value;
+  }
 
   addEvent() {
     const newEvent = new EventDefinition();
@@ -124,6 +134,7 @@ export default class Home extends Vue {
       decodeURIComponent(location.hash.replace(/^#/, ""))
     ) as UrlState;
     if (!urlState) return;
+    this.$emit("update:isDark", urlState.isDark);
     const urlKeys: Array<keyof UrlState> = [
       "bankInfo",
       "mortgageInfo",
@@ -146,7 +157,8 @@ export default class Home extends Vue {
       bankInfo: this.bankInfo,
       mortgageInfo: this.mortgageInfo,
       events: this.events,
-      settingsTab: this.settingsTab
+      settingsTab: this.settingsTab,
+      isDark: this.isDark
     };
   }
 
@@ -172,13 +184,29 @@ export default class Home extends Vue {
     return generateBankRecords(this.bankInfo, this.endDate, this.transactions);
   }
 
-  chartOptions: google.visualization.LineChartOptions = {
-    focusTarget: "category",
-    vAxis: { format: "currency" },
-    series: [{ targetAxisIndex: 0 }, { targetAxisIndex: 1 }],
-    height: 300,
-    vAxes: [{ title: "Checking" }, { title: "Savings" }]
-  };
+  get chartOptions(): google.visualization.LineChartOptions {
+    const color = this.isDark ? "#fff" : undefined;
+    const axis: google.visualization.ChartAxis = {
+      baselineColor: color,
+      titleTextStyle: { color },
+      textStyle: { color }
+    };
+
+    return {
+      backgroundColor: this.isDark ? "#1e1e1e" : undefined,
+      legend: { textStyle: { color } },
+
+      focusTarget: "category",
+      hAxis: axis,
+      vAxis: {
+        format: "currency",
+        ...axis
+      },
+      series: [{ targetAxisIndex: 0 }, { targetAxisIndex: 1 }],
+      height: 300,
+      vAxes: [{ title: "Checking" }, { title: "Savings" }]
+    };
+  }
 
   get chartData() {
     const currency = new Intl.NumberFormat(undefined, {
