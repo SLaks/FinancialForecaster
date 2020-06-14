@@ -20,9 +20,11 @@ It requires the following inputs:
 3.  Payments/income
     - Enter all one-time or recurring transactions for the checking account.
     - Enter income as positive numbers and expenses as negative.
-    - You can set transactions to recur every _X_ weeks or months.
+    - Click the recur column to set transactions to recur every _X_ weeks or months.
 
 All inputs are saved in the URL as you type, so you can clone the browser tab to compare different forecasts.
+
+As you enter data, it will display a table of monthly transactions and a graph of balances & expenses over time.
 
 ## Upcoming features
 
@@ -30,6 +32,7 @@ I may or may not implement these:
 
 - Unit tests
 - Define custom accounts
+- Better transaction entry on mobile
 - Allow expenses from other accounts
 - Model retirement funds / income tax
 - Allow multiple mortgages

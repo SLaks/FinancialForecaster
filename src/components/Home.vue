@@ -43,7 +43,7 @@
                       is="EventDefinitionUI"
                       @delete="events.splice(index, 1)"
                       :value="def"
-                      @input="Object.assign(def, $event)"
+                      @input="$set(events, index, {...$event})"
                     />
                   </tbody>
                 </v-simple-table>

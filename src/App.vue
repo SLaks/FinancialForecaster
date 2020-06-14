@@ -11,7 +11,7 @@
           width="40"
         />
 
-        <v-toolbar-title>FinancialForecaster</v-toolbar-title>
+        <v-toolbar-title>Financial Forecaster</v-toolbar-title>
       </div>
 
       <v-spacer></v-spacer>
