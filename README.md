@@ -1,6 +1,6 @@
-# MortgageCalc
+# FinancialForecaster
 
-MortgageCalc is a simple tool for financial forecasting.  You can input a mortgage, general income / expenses, and checking / savings account details / rates, and it will forecast growth over time.
+FinancialForecaster is a simple tool for financial forecasting.  You can input a mortgage, general income / expenses, and checking / savings account details / rates, and it will forecast growth over time.
 
 ## Usage
 

@@ -11,7 +11,7 @@
           width="40"
         />
 
-        <div class="shrink mt-1 hidden-sm-and-down">MortgageCalc</div>
+        <div class="shrink mt-1 hidden-sm-and-down">FinancialForecaster</div>
       </div>
 
       <v-spacer></v-spacer>

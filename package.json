@@ -1,8 +1,8 @@
 {
-  "name": "mortgage-calc",
+  "name": "financial-forecaster",
   "version": "0.1.0",
   "private": true,
-  "description": "MortgageCalc",
+  "description": "FinancialForecaster",
   "author": {
     "name": ""
   },
