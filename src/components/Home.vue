@@ -1,6 +1,6 @@
 <template>
-  <div class="Root">
-    <div class="DefinitionTabs">
+  <div class="Root pa-4">
+    <v-card class="DefinitionTabs mr-4" elevation="4">
       <v-tabs v-model="settingsTab" background-color="primary" dark>
         <v-tab>Bank Accounts</v-tab>
         <v-tab>Mortgage</v-tab>
@@ -51,15 +51,17 @@
           </v-card>
         </v-tab-item>
       </v-tabs-items>
-    </div>
+    </v-card>
 
     <div class="Results">
-      <v-card flat>
-        <v-card-text>
+      <v-card elevation="4" class="mb-4 Table">
+        <v-card-text class="ScrollableCard">
           <records-table :records="bankRecords" />
         </v-card-text>
       </v-card>
-      <GChart type="LineChart" :data="chartData" :options="chartOptions" />
+      <v-card elevation="4" class="overflow-hidden Chart">
+        <GChart type="LineChart" :data="chartData" :options="chartOptions" />
+      </v-card>
     </div>
   </div>
 </template>
@@ -195,21 +197,47 @@ export default class Home extends Vue {
 </script>
 
 <style lang="scss" scoped>
+$largeWidth: 1000px;
+
 .Root {
   display: flex;
+  overflow: hidden;
+  min-height: 0;
 
-  @media (max-width: 800px) {
+  // Force content to scroll vertically.
+  .ScrollableCard {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  @media (max-width: $largeWidth) {
+    .DefinitionTabs {
+      width: 100%;
+    }
     flex-wrap: wrap;
   }
 
-  .DefinitionTabs {
-    min-width: 600px;
-    flex-grow: 0.2;
+  @media (min-width: $largeWidth + 1) {
+    .DefinitionTabs {
+      min-width: 600px;
+      flex-grow: 0.2;
+    }
+    .Results {
+      flex-grow: 20000;
+      min-width: 500px;
+      display: flex;
+      flex-direction: column;
+    }
+    .Chart {
+      flex-shrink: 0;
+    }
+    .Table {
+      overflow: auto;
+    }
   }
+}
 
-  .Results {
-    flex-grow: 20000;
-    min-width: 400px;
-  }
+.overflow-hidden {
+  overflow: hidden;
 }
 </style>

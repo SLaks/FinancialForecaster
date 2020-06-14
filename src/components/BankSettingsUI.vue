@@ -1,18 +1,25 @@
 <template>
   <div>
-    <DatePicker label="Starting balances as of" v-model="bankInfo.asOfDate" />
+    <div class="mb-4">
+      <DatePicker label="Starting balances as of" v-model="bankInfo.asOfDate" hide-details />
+    </div>
 
-    <v-card>
+    <v-card class="mb-4">
       <v-card-title>Checking account</v-card-title>
 
       <v-card-text>
-        <div class="Row">
-          <currency-field :label="asOfLabel" v-model.number="bankInfo.checkingBalance" />
+        <div class="Row mb-2">
+          <currency-field
+            :label="asOfLabel"
+            v-model.number="bankInfo.checkingBalance"
+            hide-details
+          />
           <currency-field
             label="APR"
             v-model.number="bankInfo.checkingGrowthRate"
             :currency="{suffix: '%'}"
             :precision="3"
+            hide-details
           />
         </div>
       </v-card-text>
@@ -29,13 +36,14 @@
       <v-card-title>Savings account</v-card-title>
 
       <v-card-text>
-        <div class="Row">
-          <currency-field :label="asOfLabel" v-model.number="bankInfo.savingsBalance" />
+        <div class="Row mb-2">
+          <currency-field :label="asOfLabel" v-model.number="bankInfo.savingsBalance" hide-details />
           <currency-field
             label="APR"
             v-model.number="bankInfo.savingsGrowthRate"
             :currency="{suffix: '%'}"
             :precision="3"
+            hide-details
           />
         </div>
       </v-card-text>

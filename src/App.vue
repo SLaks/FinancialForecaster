@@ -23,16 +23,23 @@
   </v-app>
 </template>
 
+<style lang="scss">
+html,
+body,
+.v-application,
+.v-content, .Root {
+  max-height: 100%;
+  overflow: hidden;
+  height: 100%;
+}
+</style>
+
 <script lang="ts">
 import "reflect-metadata";
 import { Component, Vue } from "vue-property-decorator";
 import Home from "./components/Home.vue";
 
-@Component({
-  components: {
-    Home
-  }
-})
+@Component({ components: { Home } })
 export default class App extends Vue {}
 </script>
 

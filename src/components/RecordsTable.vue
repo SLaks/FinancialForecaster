@@ -7,11 +7,14 @@
     item-key="key"
     show-expand
     :expanded.sync="expandedRows"
+    fixed-header
     single-expand
     disable-sort
     class="RecordsTable"
   >
-    <template v-slot:item.startOfMonth="{ item }">{{item.startOfMonth | formatMonth}}</template>
+    <template v-slot:item.startOfMonth="{ item }">
+      <span class="text-no-wrap">{{item.startOfMonth | formatMonth}}</span>
+    </template>
     <template v-slot:item.checkingBalance="{ item }">{{item.checkingBalance | currency }}</template>
     <template v-slot:item.savingsBalance="{ item }">{{item.savingsBalance | currency }}</template>
     <template v-slot:item.income="{ item }">
@@ -22,7 +25,7 @@
     </template>
 
     <template v-slot:expanded-item="{ headers, item }">
-      <td :colspan="headers.length" class="ExpandedCell">
+      <td :colspan="headers.length" class="ExpandedCell pb-5">
         <v-card>
           <transactions-table :transactions="item.transactions" />
         </v-card>
@@ -63,13 +66,22 @@ export default class RecordsTable extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
-.ExpandedCell {
-  padding-bottom: 8px;
-}
-</style>
-
 <style lang="scss">
+// Force table to scroll vertically.
+.RecordsTable {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+}
+
+.RecordsTable tbody tr:not(.v-data-table__expanded__content) > td:first-child {
+  padding: 0 0 0 8px;
+}
+
+// Prevent a scrollbar when collapsed (from the focus circle).
+.RecordsTable tbody tr:not(.v-data-table__expanded__content):last-child .v-icon {
+  overflow: hidden;
+}
 .RecordsTable tbody tr.v-data-table__expanded__content {
   box-shadow: none !important;
 }
