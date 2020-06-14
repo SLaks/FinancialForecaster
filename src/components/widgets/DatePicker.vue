@@ -18,7 +18,14 @@
         v-on="on"
       >
         <template v-slot:append>
-          <v-btn @click="menuOpen = !menuOpen;" icon x-small tabindex="-1">
+          <v-btn
+            @click="menuOpen = !menuOpen;"
+            icon
+            :x-small="smallIcon"
+            :small="!smallIcon"
+            tabindex="-1"
+            :class="smallIcon ? '' : 'IconButton'"
+          >
             <v-icon>mdi-menu-down</v-icon>
           </v-btn>
         </template>
@@ -27,6 +34,12 @@
     <v-date-picker :value="isoDate" @input="setDate($event)" no-title />
   </v-menu>
 </template>
+
+<style lang="scss" scoped>
+.IconButton.IconButton {
+  width: 24px;
+}
+</style>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
@@ -37,6 +50,7 @@ const formatStr = "MM/dd/yyyy";
 export default class DatePicker extends Vue {
   menuOpen = false;
 
+  @Prop({ type: Boolean }) smallIcon!: boolean;
   @Prop() value!: Date;
 
   get formattedDate() {

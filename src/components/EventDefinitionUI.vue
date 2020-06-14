@@ -13,7 +13,7 @@
       <CurrencyField dense hide-details :color="color" v-model="def.amount" :allowNegative="true" />
     </td>
     <td style="width: 144px;">
-      <DatePicker dense hide-details :color="color" v-model="def.startDate" />
+      <DatePicker dense hide-details small-icon :color="color" v-model="def.startDate" />
     </td>
     <td>
       <v-menu offset-y transition="slide-x-transition" :close-on-content-click="false">
