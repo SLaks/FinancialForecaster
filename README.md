@@ -1,8 +1,15 @@
-# FinancialForecaster
+# FinancialForecaster ![logo](https://financial-forecaster.slaks.net/favicon-32x32.png)
 
 FinancialForecaster is a simple tool for financial forecasting. You can input a mortgage, general income / expenses (one-time or recurring), and checking / savings account details / rates, and it will forecast growth over time.
 
 Note: This forecaster (currently) does not model enough details (eg, income tax) to give precise forecasts, and should only be relied on for general rates.
+
+## [▶ &nbsp; Run](https://financial-forecaster.slaks.net/)
+
+You will need to enter your own financial data (don't worry; this app never talks to any servers).
+
+For a quick demo, try some [sample data].
+
 
 ## Usage
 
@@ -40,3 +47,6 @@ I may or may not implement these:
 - Save / load data from Google Sheets
 - Add presets for the expenses table
 - Emoji dropdown for expense names
+
+
+[sample data]:https://financial-forecaster.slaks.net/#{%22bankInfo%22:{%22asOfDate%22:%222020-06-30T04:00:00.000Z%22,%22checkingBalance%22:1000,%22checkingGrowthRate%22:0.1,%22checkingTarget%22:5000,%22savingsBalance%22:10000,%22savingsGrowthRate%22:2},%22mortgageInfo%22:{%22startDate%22:%222020-06-15T00:00:34.841Z%22,%22loanAmount%22:160000,%22term%22:30,%22housePrice%22:200000,%22rate%22:5,%22period%22:%22monthly%22},%22events%22:[{%22id%22:1,%22name%22:%22Paycheck%22,%22amount%22:1500,%22startDate%22:%222020-06-12T04:00:00.000Z%22,%22endDate%22:null,%22period%22:%22weeks%22,%22periodCount%22:2},{%22id%22:2,%22name%22:%22Bills%22,%22amount%22:-200,%22startDate%22:%222020-06-01T04:00:00.000Z%22,%22endDate%22:null,%22period%22:%22months%22,%22periodCount%22:1},{%22id%22:3,%22name%22:%22Grocceries%22,%22amount%22:-50,%22startDate%22:%222020-06-15T00:14:12.574Z%22,%22endDate%22:null,%22period%22:%22weeks%22,%22periodCount%22:2},{%22id%22:4,%22name%22:%22Super%20fun%20stuff!%22,%22amount%22:-100,%22startDate%22:%222020-06-15T00:14:25.809Z%22,%22endDate%22:null,%22period%22:%22months%22,%22periodCount%22:2},{%22id%22:5,%22name%22:%22New%20pool%22,%22amount%22:-2000,%22startDate%22:%222020-08-10T04:00:00.000Z%22,%22endDate%22:null,%22period%22:%22once%22,%22periodCount%22:1},{%22id%22:6,%22name%22:%22Taxes%22,%22amount%22:-2000,%22startDate%22:%222020-04-15T04:00:00.000Z%22,%22endDate%22:null,%22period%22:%22months%22,%22periodCount%22:12}],%22settingsTab%22:2,%22isDark%22:false}
