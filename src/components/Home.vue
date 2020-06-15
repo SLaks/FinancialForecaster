@@ -56,13 +56,27 @@
     </div>
 
     <div class="Column Right">
-      <v-card elevation="4" class="ScrollableCard">
+      <v-card elevation="4" class="ScrollableCard" v-if="bankRecords.length">
         <v-card-text>
           <records-table :records="bankRecords" />
         </v-card-text>
       </v-card>
 
-      <v-card elevation="4" class="overflow-hidden Chart">
+      <v-card elevation="4" v-else>
+        <v-card-title>No Data</v-card-title>
+        <v-card-text>
+          <p>There is no data to display.</p>
+          <p>
+            Enter transactions in the tabs, or see the
+            <a
+              href="https://github.com/SLaks/FinancialForecaster/blob/primary/README.md"
+            >documentation</a>
+            for instructions.
+          </p>
+        </v-card-text>
+      </v-card>
+
+      <v-card elevation="4" class="overflow-hidden Chart" v-if="bankRecords.length">
         <GChart type="LineChart" :data="chartData" :options="chartOptions" />
       </v-card>
     </div>
@@ -255,7 +269,7 @@ export default class Home extends Vue {
       }
       &.Right {
         flex-grow: 20000;
-        min-width: 500px;
+        min-width: 0;
       }
     }
 
